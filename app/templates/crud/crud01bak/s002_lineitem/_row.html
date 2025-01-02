@@ -1,0 +1,27 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.manifest_id_name if 'manifest_id' in item.__dict__ and 'manifest_id'.endswith('_id') else item.manifest_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.description_name if 'description' in item.__dict__ and 'description'.endswith('_id') else item.description }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.quantity_name if 'quantity' in item.__dict__ and 'quantity'.endswith('_id') else item.quantity }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.weight_name if 'weight' in item.__dict__ and 'weight'.endswith('_id') else item.weight }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.volume_name if 'volume' in item.__dict__ and 'volume'.endswith('_id') else item.volume }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s002_lineitem.edit_s002_lineitem', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s002_lineitem.delete_s002_lineitem', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S002_LineItem?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

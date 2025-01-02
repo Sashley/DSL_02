@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S006_ContainerHistory</h1>
+
+    <form hx-post="{{ form_action }}" hx-target="#main-content" class="max-w-lg">
+        
+        <div class="mb-4">
+            <label for="id" class="block text-gray-700 text-sm font-bold mb-2">Id</label>
+            <input type="text" 
+                   id="id" 
+                   name="id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="container_id" class="block text-gray-700 text-sm font-bold mb-2">Container Id</label>
+            <input type="text" 
+                   id="container_id" 
+                   name="container_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.container_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="port_id" class="block text-gray-700 text-sm font-bold mb-2">Port Id</label>
+            <input type="text" 
+                   id="port_id" 
+                   name="port_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.port_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="client_id" class="block text-gray-700 text-sm font-bold mb-2">Client Id</label>
+            <input type="text" 
+                   id="client_id" 
+                   name="client_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.client_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="container_status_id" class="block text-gray-700 text-sm font-bold mb-2">Container Status Id</label>
+            <input type="text" 
+                   id="container_status_id" 
+                   name="container_status_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.container_status_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="damage" class="block text-gray-700 text-sm font-bold mb-2">Damage</label>
+            <input type="text" 
+                   id="damage" 
+                   name="damage"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.damage if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="updated" class="block text-gray-700 text-sm font-bold mb-2">Updated</label>
+            <input type="text" 
+                   id="updated" 
+                   name="updated"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.updated if edit else '' }}"></input>
+        </div>
+        
+        <div class="flex items-center justify-between mt-6">
+            <button type="submit" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                {{ 'Update' if edit else 'Create' }}
+            </button>
+            <a href="{{ url_for('s006_containerhistory.list_s006_containerhistory') }}" 
+               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

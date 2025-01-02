@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S002_LineItem</h1>
+
+    <form hx-post="{{ form_action }}" hx-target="#main-content" class="max-w-lg">
+        
+        <div class="mb-4">
+            <label for="id" class="block text-gray-700 text-sm font-bold mb-2">Id</label>
+            <input type="text" 
+                   id="id" 
+                   name="id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="manifest_id" class="block text-gray-700 text-sm font-bold mb-2">Manifest Id</label>
+            <select 
+                   id="manifest_id" 
+                   name="manifest_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   >
+                <option value="">Select...</option>
+                {{% for related in manifests %}}
+                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.manifest_id == related.id else '' }}}}>
+                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
+                </option>
+                {{% endfor %}}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+            <input type="text" 
+                   id="description" 
+                   name="description"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.description if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity</label>
+            <input type="text" 
+                   id="quantity" 
+                   name="quantity"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.quantity if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight</label>
+            <input type="text" 
+                   id="weight" 
+                   name="weight"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.weight if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="volume" class="block text-gray-700 text-sm font-bold mb-2">Volume</label>
+            <input type="text" 
+                   id="volume" 
+                   name="volume"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.volume if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="pack_type_id" class="block text-gray-700 text-sm font-bold mb-2">Pack Type Id</label>
+            <select 
+                   id="pack_type_id" 
+                   name="pack_type_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   >
+                <option value="">Select...</option>
+                {{% for related in pack_types %}}
+                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.pack_type_id == related.id else '' }}}}>
+                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
+                </option>
+                {{% endfor %}}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="commodity_id" class="block text-gray-700 text-sm font-bold mb-2">Commodity Id</label>
+            <select 
+                   id="commodity_id" 
+                   name="commodity_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   >
+                <option value="">Select...</option>
+                {{% for related in commodities %}}
+                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.commodity_id == related.id else '' }}}}>
+                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
+                </option>
+                {{% endfor %}}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="container_id" class="block text-gray-700 text-sm font-bold mb-2">Container Id</label>
+            <select 
+                   id="container_id" 
+                   name="container_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   >
+                <option value="">Select...</option>
+                {{% for related in containers %}}
+                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.container_id == related.id else '' }}}}>
+                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
+                </option>
+                {{% endfor %}}
+            </select>
+        </div>
+        
+        <div class="flex items-center justify-between mt-6">
+            <button type="submit" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                {{ 'Update' if edit else 'Create' }}
+            </button>
+            <a href="{{ url_for('crud.s002_lineitem.list_s002_lineitem') }}" 
+               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

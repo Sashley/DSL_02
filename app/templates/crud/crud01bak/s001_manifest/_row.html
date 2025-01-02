@@ -1,0 +1,27 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.bill_of_lading_name if 'bill_of_lading' in item.__dict__ and 'bill_of_lading'.endswith('_id') else item.bill_of_lading }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.shipper_id_name if 'shipper_id' in item.__dict__ and 'shipper_id'.endswith('_id') else item.shipper_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.consignee_id_name if 'consignee_id' in item.__dict__ and 'consignee_id'.endswith('_id') else item.consignee_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.vessel_id_name if 'vessel_id' in item.__dict__ and 'vessel_id'.endswith('_id') else item.vessel_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.voyage_id_name if 'voyage_id' in item.__dict__ and 'voyage_id'.endswith('_id') else item.voyage_id }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s001_manifest.edit_s001_manifest', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s001_manifest.delete_s001_manifest', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S001_Manifest?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

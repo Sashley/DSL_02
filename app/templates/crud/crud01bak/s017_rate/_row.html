@@ -1,0 +1,27 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.distance_rate_code_name if 'distance_rate_code' in item.__dict__ and 'distance_rate_code'.endswith('_id') else item.distance_rate_code }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.commodity_id_name if 'commodity_id' in item.__dict__ and 'commodity_id'.endswith('_id') else item.commodity_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.pack_type_id_name if 'pack_type_id' in item.__dict__ and 'pack_type_id'.endswith('_id') else item.pack_type_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.client_id_name if 'client_id' in item.__dict__ and 'client_id'.endswith('_id') else item.client_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.rate_name if 'rate' in item.__dict__ and 'rate'.endswith('_id') else item.rate }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s017_rate.edit_s017_rate', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s017_rate.delete_s017_rate', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S017_Rate?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

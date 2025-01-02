@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping App</title>
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <nav class="bg-white shadow">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="text-blue-600 font-bold text-xl">Shipping App</a>
+                    <a href="/" class="text-gray-700 hover:text-gray-900">Home</a>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="text-gray-700 hover:text-gray-900 group inline-flex items-center space-x-2">
+                            <span>Data Management</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                            <div class="py-1">
+                                <a href="/crud/s001_manifest/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Manifests</a>
+                                <a href="/crud/s002_lineitem/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Line Items</a>
+                                <a href="/crud/s003_commodity/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Commodities</a>
+                                <a href="/crud/s004_packtype/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pack Types</a>
+                                <a href="/crud/s005_container/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Containers</a>
+                                <a href="/crud/s006_containerhistory/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Container History</a>
+                                <a href="/crud/s007_containerstatus/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Container Status</a>
+                                <a href="/crud/s008_shippingcompany/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Shipping Companies</a>
+                                <a href="/crud/s009_vessel/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vessels</a>
+                                <a href="/crud/s010_voyage/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Voyages</a>
+                                <a href="/crud/s011_leg/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Legs</a>
+                                <a href="/crud/s012_port/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ports</a>
+                                <a href="/crud/s013_portpair/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Port Pairs</a>
+                                <a href="/crud/s014_country/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Countries</a>
+                                <a href="/crud/s015_client/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Clients</a>
+                                <a href="/crud/s016_user/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Users</a>
+                                <a href="/crud/s017_rate/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rates</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        // Enable HTMX debug logging
+        htmx.logAll();
+        
+        // Add event listeners for HTMX events
+        document.body.addEventListener('htmx:beforeRequest', function(evt) {
+            console.log('HTMX Request:', evt.detail);
+        });
+        
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            console.log('HTMX Response:', evt.detail);
+        });
+    </script>
+</body>
+</html>

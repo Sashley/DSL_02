@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "Models": {
+    "S001_Manifest": {
+      "Fields": {
+        "id": {
+          "type": "Integer",
+          "primary_key": true,
+          "nullable": false
+        },
+        "bill_of_lading": {
+          "type": "String",
+          "nullable": true,
+          "default": null
+        },
+        "shipper_id": {
+          "type": "Integer",
+          "foreign_key": "S002_Client.id",
+          "nullable": true
+        },
+        "consignee_id": {
+          "type": "Integer",
+          "foreign_key": "S002_Client.id",
+          "nullable": true
+        }
+      }
+    },
+    "S002_Client": {
+      "Fields": {
+        "id": {
+          "type": "Integer",
+          "primary_key": true,
+          "nullable": false
+        },
+        "name": {
+          "type": "String",
+          "nullable": false
+        },
+        "contact": {
+          "type": "String",
+          "nullable": true
+        }
+      }
+    }
+  }
+}

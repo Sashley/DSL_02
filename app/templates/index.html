@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Shipping Management Dashboard</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Manifests -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Manifests</h2>
+            <p class="text-gray-600 mb-4">Manage shipping manifests and related documents</p>
+            <a href="{{ url_for('crud.s001_manifest.list_s001_manifest') }}" 
+               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                View Manifests
+            </a>
+        </div>
+
+        <!-- Line Items -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Line Items</h2>
+            <p class="text-gray-600 mb-4">Track individual shipping items and their details</p>
+            <a href="{{ url_for('crud.s002_lineitem.list_s002_lineitem') }}" 
+               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                View Line Items
+            </a>
+        </div>
+
+        <!-- Clients -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Clients</h2>
+            <p class="text-gray-600 mb-4">Manage client information and relationships</p>
+            <a href="{{ url_for('crud.s015_client.list_s015_client') }}" 
+               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                View Clients
+            </a>
+        </div>
+
+        <!-- Users -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Users</h2>
+            <p class="text-gray-600 mb-4">Manage system users and their permissions</p>
+            <a href="{{ url_for('crud.s016_user.list_s016_user') }}" 
+               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                View Users
+            </a>
+        </div>
+
+        <!-- Commodities -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Commodities</h2>
+            <p class="text-gray-600 mb-4">Manage shipping commodities and their classifications</p>
+            <a href="{{ url_for('crud.s003_commodity.list_s003_commodity') }}" 
+               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                View Commodities
+            </a>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Quick Links</h2>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('crud.s012_port.list_s012_port') }}" 
+                       class="text-blue-600 hover:text-blue-800">Ports</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.s008_shippingcompany.list_s008_shippingcompany') }}" 
+                       class="text-blue-600 hover:text-blue-800">Shipping Companies</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.s009_vessel.list_s009_vessel') }}" 
+                       class="text-blue-600 hover:text-blue-800">Vessels</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.s010_voyage.list_s010_voyage') }}" 
+                       class="text-blue-600 hover:text-blue-800">Voyages</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

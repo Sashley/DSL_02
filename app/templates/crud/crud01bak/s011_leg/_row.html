@@ -1,0 +1,27 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.voyage_id_name if 'voyage_id' in item.__dict__ and 'voyage_id'.endswith('_id') else item.voyage_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.port_id_name if 'port_id' in item.__dict__ and 'port_id'.endswith('_id') else item.port_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.leg_number_name if 'leg_number' in item.__dict__ and 'leg_number'.endswith('_id') else item.leg_number }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.eta_name if 'eta' in item.__dict__ and 'eta'.endswith('_id') else item.eta }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.etd_name if 'etd' in item.__dict__ and 'etd'.endswith('_id') else item.etd }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s011_leg.edit_s011_leg', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s011_leg.delete_s011_leg', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S011_Leg?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

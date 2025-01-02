@@ -1,0 +1,25 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.pol_id_name if 'pol_id' in item.__dict__ and 'pol_id'.endswith('_id') else item.pol_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.pod_id_name if 'pod_id' in item.__dict__ and 'pod_id'.endswith('_id') else item.pod_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.distance_name if 'distance' in item.__dict__ and 'distance'.endswith('_id') else item.distance }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.distance_rate_code_name if 'distance_rate_code' in item.__dict__ and 'distance_rate_code'.endswith('_id') else item.distance_rate_code }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s013_portpair.edit_s013_portpair', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s013_portpair.delete_s013_portpair', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S013_PortPair?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

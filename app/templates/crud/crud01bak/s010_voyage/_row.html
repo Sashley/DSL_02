@@ -1,0 +1,23 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.name_name if 'name' in item.__dict__ and 'name'.endswith('_id') else item.name }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.vessel_id_name if 'vessel_id' in item.__dict__ and 'vessel_id'.endswith('_id') else item.vessel_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.rotation_number_name if 'rotation_number' in item.__dict__ and 'rotation_number'.endswith('_id') else item.rotation_number }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s010_voyage.edit_s010_voyage', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s010_voyage.delete_s010_voyage', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S010_Voyage?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

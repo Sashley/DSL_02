@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S017_Rate</h1>
+
+        <form hx-post="{{ form_action }}" 
+              hx-target="#main-content"
+              hx-swap="outerHTML"
+              class="space-y-6">
+            
+            <div class="flex flex-col">
+                <label for="id" class="text-sm font-semibold text-gray-600 mb-1">Id</label>
+                <input type="text" 
+                       id="id" 
+                       name="id"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.id if edit else '' }}"></input>
+            </div>
+            <div class="flex flex-col">
+                <label for="distance_rate_code" class="text-sm font-semibold text-gray-600 mb-1">Distance Rate Code</label>
+                <input type="text" 
+                       id="distance_rate_code" 
+                       name="distance_rate_code"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.distance_rate_code if edit else '' }}"></input>
+            </div>
+            <div class="flex flex-col">
+                <label for="commodity_id" class="text-sm font-semibold text-gray-600 mb-1">Commodity Id</label>
+                <input type="text" 
+                       id="commodity_id" 
+                       name="commodity_id"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.commodity_id if edit else '' }}"></input>
+            </div>
+            <div class="flex flex-col">
+                <label for="pack_type_id" class="text-sm font-semibold text-gray-600 mb-1">Pack Type Id</label>
+                <input type="text" 
+                       id="pack_type_id" 
+                       name="pack_type_id"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.pack_type_id if edit else '' }}"></input>
+            </div>
+            <div class="flex flex-col">
+                <label for="client_id" class="text-sm font-semibold text-gray-600 mb-1">Client Id</label>
+                <input type="text" 
+                       id="client_id" 
+                       name="client_id"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.client_id if edit else '' }}"></input>
+            </div>
+            <div class="flex flex-col">
+                <label for="rate" class="text-sm font-semibold text-gray-600 mb-1">Rate</label>
+                <input type="text" 
+                       id="rate" 
+                       name="rate"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.rate if edit else '' }}"></input>
+            </div>
+            <div class="flex flex-col">
+                <label for="effective" class="text-sm font-semibold text-gray-600 mb-1">Effective</label>
+                <input type="text" 
+                       id="effective" 
+                       name="effective"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.effective if edit else '' }}"></input>
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ url_for('crud.s017_rate.list_s017_rate') }}" 
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    {{ 'Update' if edit else 'Create' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S017_Rate</h1>
+
+    <form hx-post="{{ form_action }}" hx-target="#main-content" class="max-w-lg">
+        
+        <div class="mb-4">
+            <label for="id" class="block text-gray-700 text-sm font-bold mb-2">Id</label>
+            <input type="text" 
+                   id="id" 
+                   name="id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="distance_rate_code" class="block text-gray-700 text-sm font-bold mb-2">Distance Rate Code</label>
+            <input type="text" 
+                   id="distance_rate_code" 
+                   name="distance_rate_code"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.distance_rate_code if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="commodity_id" class="block text-gray-700 text-sm font-bold mb-2">Commodity Id</label>
+            <input type="text" 
+                   id="commodity_id" 
+                   name="commodity_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.commodity_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="pack_type_id" class="block text-gray-700 text-sm font-bold mb-2">Pack Type Id</label>
+            <input type="text" 
+                   id="pack_type_id" 
+                   name="pack_type_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.pack_type_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="client_id" class="block text-gray-700 text-sm font-bold mb-2">Client Id</label>
+            <input type="text" 
+                   id="client_id" 
+                   name="client_id"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.client_id if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="rate" class="block text-gray-700 text-sm font-bold mb-2">Rate</label>
+            <input type="text" 
+                   id="rate" 
+                   name="rate"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.rate if edit else '' }}"></input>
+        </div>
+        <div class="mb-4">
+            <label for="effective" class="block text-gray-700 text-sm font-bold mb-2">Effective</label>
+            <input type="text" 
+                   id="effective" 
+                   name="effective"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   value="{{ item.effective if edit else '' }}"></input>
+        </div>
+        
+        <div class="flex items-center justify-between mt-6">
+            <button type="submit" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                {{ 'Update' if edit else 'Create' }}
+            </button>
+            <a href="{{ url_for('s017_rate.list_s017_rate') }}" 
+               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.name_name if 'name' in item.__dict__ and 'name'.endswith('_id') else item.name }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.address_name if 'address' in item.__dict__ and 'address'.endswith('_id') else item.address }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.town_name if 'town' in item.__dict__ and 'town'.endswith('_id') else item.town }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.country_id_name if 'country_id' in item.__dict__ and 'country_id'.endswith('_id') else item.country_id }}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {{ item.contact_person_name if 'contact_person' in item.__dict__ and 'contact_person'.endswith('_id') else item.contact_person }}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.s015_client.edit_s015_client', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.s015_client.delete_s015_client', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this S015_Client?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

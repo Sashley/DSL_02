@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S001_Manifest</h1>
+
+        <form hx-post="{{ form_action }}" 
+              hx-target="#main-content"
+              hx-swap="outerHTML"
+              class="space-y-6">
+            <div class="flex flex-col">
+                <label for="id" class="text-sm font-semibold text-gray-600 mb-1">ID</label>
+                <input type="text" 
+                       id="id" 
+                       name="id"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.id if edit else '' }}">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="bill_of_lading" class="text-sm font-semibold text-gray-600 mb-1">Bill of Lading</label>
+                <input type="text" 
+                       id="bill_of_lading" 
+                       name="bill_of_lading"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.bill_of_lading if edit else '' }}">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="shipper_id" class="text-sm font-semibold text-gray-600 mb-1">Shipper</label>
+                <select id="shipper_id" 
+                        name="shipper_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in shippers %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.shipper_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="consignee_id" class="text-sm font-semibold text-gray-600 mb-1">Consignee</label>
+                <select id="consignee_id" 
+                        name="consignee_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in consignees %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.consignee_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="vessel_id" class="text-sm font-semibold text-gray-600 mb-1">Vessel</label>
+                <select id="vessel_id" 
+                        name="vessel_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in vessels %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.vessel_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="voyage_id" class="text-sm font-semibold text-gray-600 mb-1">Voyage</label>
+                <select id="voyage_id" 
+                        name="voyage_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in voyages %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.voyage_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="port_of_loading_id" class="text-sm font-semibold text-gray-600 mb-1">Port of Loading</label>
+                <select id="port_of_loading_id" 
+                        name="port_of_loading_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in ports %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.port_of_loading_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="port_of_discharge_id" class="text-sm font-semibold text-gray-600 mb-1">Port of Discharge</label>
+                <select id="port_of_discharge_id" 
+                        name="port_of_discharge_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in ports %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.port_of_discharge_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="place_of_delivery" class="text-sm font-semibold text-gray-600 mb-1">Place of Delivery</label>
+                <input type="text" 
+                       id="place_of_delivery" 
+                       name="place_of_delivery"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.place_of_delivery if edit else '' }}">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="place_of_receipt" class="text-sm font-semibold text-gray-600 mb-1">Place of Receipt</label>
+                <input type="text" 
+                       id="place_of_receipt" 
+                       name="place_of_receipt"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.place_of_receipt if edit else '' }}">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="clauses" class="text-sm font-semibold text-gray-600 mb-1">Clauses</label>
+                <input type="text" 
+                       id="clauses" 
+                       name="clauses"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.clauses if edit else '' }}">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="date_of_receipt" class="text-sm font-semibold text-gray-600 mb-1">Date of Receipt</label>
+                <input type="text" 
+                       id="date_of_receipt" 
+                       name="date_of_receipt"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.date_of_receipt if edit else '' }}">
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ url_for('crud.s001_manifest.list_s001_manifest') }}" 
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    {{ 'Update' if edit else 'Create' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

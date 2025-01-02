@@ -1,0 +1,950 @@
+{
+    "version": "1.0",
+    "Models": {
+        "S001_Manifest": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "bill_of_lading": {
+                    "type": "String",
+                    "unique": true,
+                    "nullable": true,
+                    "default": null
+                },
+                "shipper_id": {
+                    "type": "Integer",
+                    "foreign_key": "s015_client.id",
+                    "nullable": true
+                },
+                "consignee_id": {
+                    "type": "Integer",
+                    "foreign_key": "s015_client.id",
+                    "nullable": true
+                },
+                "vessel_id": {
+                    "type": "Integer",
+                    "foreign_key": "s009_vessel.id",
+                    "nullable": true
+                },
+                "voyage_id": {
+                    "type": "Integer",
+                    "foreign_key": "s010_voyage.id",
+                    "nullable": true
+                },
+                "port_of_loading_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "port_of_discharge_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "place_of_delivery": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "place_of_receipt": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "clauses": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "date_of_receipt": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_shipper_id": [
+                    "shipper_id"
+                ],
+                "idx_consignee_id": [
+                    "consignee_id"
+                ],
+                "idx_vessel_id": [
+                    "vessel_id"
+                ],
+                "idx_voyage_id": [
+                    "voyage_id"
+                ],
+                "idx_port_of_loading_id": [
+                    "port_of_loading_id"
+                ],
+                "idx_port_of_discharge_id": [
+                    "port_of_discharge_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S015_Client",
+                        "route": "/view/S015_Client?filter=shipper_id"
+                    },
+                    {
+                        "related_table": "S015_Client",
+                        "route": "/view/S015_Client?filter=consignee_id"
+                    },
+                    {
+                        "related_table": "S009_Vessel",
+                        "route": "/view/S009_Vessel?filter=vessel_id"
+                    },
+                    {
+                        "related_table": "S010_Voyage",
+                        "route": "/view/S010_Voyage?filter=voyage_id"
+                    },
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=port_of_loading_id"
+                    },
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=port_of_discharge_id"
+                    },
+                    {
+                        "drill_down": "LineItem",
+                        "route": "/view/LineItem?filter=line_items"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S002_LineItem": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "manifest_id": {
+                    "type": "Integer",
+                    "foreign_key": "s001_manifest.id",
+                    "nullable": true
+                },
+                "description": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "quantity": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                },
+                "weight": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                },
+                "volume": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                },
+                "pack_type_id": {
+                    "type": "Integer",
+                    "foreign_key": "s004_packtype.id",
+                    "nullable": true
+                },
+                "commodity_id": {
+                    "type": "Integer",
+                    "foreign_key": "s003_commodity.id",
+                    "nullable": true
+                },
+                "container_id": {
+                    "type": "Integer",
+                    "foreign_key": "s005_container.id",
+                    "nullable": true
+                }
+            },
+            "Indices": {
+                "idx_manifest_id": [
+                    "manifest_id"
+                ],
+                "idx_pack_type_id": [
+                    "pack_type_id"
+                ],
+                "idx_commodity_id": [
+                    "commodity_id"
+                ],
+                "idx_container_id": [
+                    "container_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S001_Manifest",
+                        "route": "/view/S001_Manifest?filter=manifest_id"
+                    },
+                    {
+                        "related_table": "S004_PackType",
+                        "route": "/view/S004_PackType?filter=pack_type_id"
+                    },
+                    {
+                        "related_table": "S003_Commodity",
+                        "route": "/view/S003_Commodity?filter=commodity_id"
+                    },
+                    {
+                        "related_table": "S005_Container",
+                        "route": "/view/S005_Container?filter=container_id"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S003_Commodity": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "description": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {},
+            "Menus": {
+                "Context": [
+                    {
+                        "drill_down": "LineItem",
+                        "route": "/view/LineItem?filter=line_items"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S004_PackType": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "description": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {},
+            "Menus": {
+                "Context": [
+                    {
+                        "drill_down": "LineItem",
+                        "route": "/view/LineItem?filter=line_items"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S005_Container": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "number": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "port_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "updated": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_port_id": [
+                    "port_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=port_id"
+                    },
+                    {
+                        "drill_down": "LineItem",
+                        "route": "/view/LineItem?filter=line_items"
+                    },
+                    {
+                        "drill_down": "ContainerHistory",
+                        "route": "/view/ContainerHistory?filter=container_histories"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S006_ContainerHistory": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "container_id": {
+                    "type": "Integer",
+                    "foreign_key": "s005_container.id",
+                    "nullable": true
+                },
+                "port_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "client_id": {
+                    "type": "Integer",
+                    "foreign_key": "s015_client.id",
+                    "nullable": true
+                },
+                "container_status_id": {
+                    "type": "Integer",
+                    "foreign_key": "s007_containerstatus.id",
+                    "nullable": true
+                },
+                "damage": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "updated": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_container_id": [
+                    "container_id"
+                ],
+                "idx_port_id": [
+                    "port_id"
+                ],
+                "idx_client_id": [
+                    "client_id"
+                ],
+                "idx_container_status_id": [
+                    "container_status_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S005_Container",
+                        "route": "/view/S005_Container?filter=container_id"
+                    },
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=port_id"
+                    },
+                    {
+                        "related_table": "S015_Client",
+                        "route": "/view/S015_Client?filter=client_id"
+                    },
+                    {
+                        "related_table": "S007_ContainerStatus",
+                        "route": "/view/S007_ContainerStatus?filter=container_status_id"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S007_ContainerStatus": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "description": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {},
+            "Menus": {
+                "Context": [
+                    {
+                        "drill_down": "ContainerHistory",
+                        "route": "/view/ContainerHistory?filter=container_histories"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S008_ShippingCompany": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {},
+            "Menus": {
+                "Context": [
+                    {
+                        "drill_down": "Vessel",
+                        "route": "/view/Vessel?filter=vessels"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S009_Vessel": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "shipping_company_id": {
+                    "type": "Integer",
+                    "foreign_key": "s008_shippingcompany.id",
+                    "nullable": true
+                }
+            },
+            "Indices": {
+                "idx_shipping_company_id": [
+                    "shipping_company_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S008_ShippingCompany",
+                        "route": "/view/S008_ShippingCompany?filter=shipping_company_id"
+                    },
+                    {
+                        "drill_down": "Manifest",
+                        "route": "/view/Manifest?filter=manifests"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S010_Voyage": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "vessel_id": {
+                    "type": "Integer",
+                    "foreign_key": "s009_vessel.id",
+                    "nullable": true
+                },
+                "rotation_number": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_vessel_id": [
+                    "vessel_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S009_Vessel",
+                        "route": "/view/S009_Vessel?filter=vessel_id"
+                    },
+                    {
+                        "drill_down": "Leg",
+                        "route": "/view/Leg?filter=legs"
+                    },
+                    {
+                        "drill_down": "Manifest",
+                        "route": "/view/Manifest?filter=manifests"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S011_Leg": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "voyage_id": {
+                    "type": "Integer",
+                    "foreign_key": "s010_voyage.id",
+                    "nullable": true
+                },
+                "port_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "leg_number": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                },
+                "eta": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "etd": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_voyage_id": [
+                    "voyage_id"
+                ],
+                "idx_port_id": [
+                    "port_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S010_Voyage",
+                        "route": "/view/S010_Voyage?filter=voyage_id"
+                    },
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=port_id"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S012_Port": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "country_id": {
+                    "type": "Integer",
+                    "foreign_key": "s014_country.id",
+                    "nullable": true
+                },
+                "prefix": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_country_id": [
+                    "country_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S014_Country",
+                        "route": "/view/S014_Country?filter=country_id"
+                    },
+                    {
+                        "drill_down": "Container",
+                        "route": "/view/Container?filter=containers"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S013_PortPair": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "pol_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "pod_id": {
+                    "type": "Integer",
+                    "foreign_key": "s012_port.id",
+                    "nullable": true
+                },
+                "distance": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                },
+                "distance_rate_code": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_pol_id": [
+                    "pol_id"
+                ],
+                "idx_pod_id": [
+                    "pod_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=pol_id"
+                    },
+                    {
+                        "related_table": "S012_Port",
+                        "route": "/view/S012_Port?filter=pod_id"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S014_Country": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {},
+            "Menus": {
+                "Context": [
+                    {
+                        "drill_down": "Port",
+                        "route": "/view/Port?filter=ports"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S015_Client": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "address": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "town": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "country_id": {
+                    "type": "Integer",
+                    "foreign_key": "s014_country.id",
+                    "nullable": true
+                },
+                "contact_person": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "email": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "phone": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_country_id": [
+                    "country_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S014_Country",
+                        "route": "/view/S014_Country?filter=country_id"
+                    },
+                    {
+                        "drill_down": "Manifest",
+                        "route": "/view/Manifest?filter=manifests"
+                    },
+                    {
+                        "drill_down": "Manifest",
+                        "route": "/view/Manifest?filter=consigned_manifests"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S016_User": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "name": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "email": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "password_hash": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {},
+            "Menus": {
+                "Context": [
+                    {
+                        "drill_down": "LineItem",
+                        "route": "/view/LineItem?filter=line_items"
+                    }
+                ],
+                "Statistics": []
+            }
+        },
+        "S017_Rate": {
+            "Fields": {
+                "id": {
+                    "type": "Integer",
+                    "primary_key": true,
+                    "nullable": false,
+                    "auto_increment": true
+                },
+                "distance_rate_code": {
+                    "type": "Integer",
+                    "nullable": true,
+                    "default": null
+                },
+                "commodity_id": {
+                    "type": "Integer",
+                    "foreign_key": "s003_commodity.id",
+                    "nullable": true
+                },
+                "pack_type_id": {
+                    "type": "Integer",
+                    "foreign_key": "s004_packtype.id",
+                    "nullable": true
+                },
+                "client_id": {
+                    "type": "Integer",
+                    "foreign_key": "s015_client.id",
+                    "nullable": true
+                },
+                "rate": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                },
+                "effective": {
+                    "type": "String",
+                    "nullable": true,
+                    "default": null
+                }
+            },
+            "Indices": {
+                "idx_commodity_id": [
+                    "commodity_id"
+                ],
+                "idx_pack_type_id": [
+                    "pack_type_id"
+                ],
+                "idx_client_id": [
+                    "client_id"
+                ]
+            },
+            "Menus": {
+                "Context": [
+                    {
+                        "related_table": "S003_Commodity",
+                        "route": "/view/S003_Commodity?filter=commodity_id"
+                    },
+                    {
+                        "related_table": "S004_PackType",
+                        "route": "/view/S004_PackType?filter=pack_type_id"
+                    },
+                    {
+                        "related_table": "S015_Client",
+                        "route": "/view/S015_Client?filter=client_id"
+                    }
+                ],
+                "Statistics": []
+            }
+        }
+    },
+    "Menus": {
+        "Main": [
+            {
+                "table": "Manifest",
+                "route": "/view/Manifest"
+            },
+            {
+                "table": "LineItem",
+                "route": "/view/LineItem"
+            },
+            {
+                "table": "Commodity",
+                "route": "/view/Commodity"
+            },
+            {
+                "table": "PackType",
+                "route": "/view/PackType"
+            },
+            {
+                "table": "Container",
+                "route": "/view/Container"
+            },
+            {
+                "table": "ContainerHistory",
+                "route": "/view/ContainerHistory"
+            },
+            {
+                "table": "ContainerStatus",
+                "route": "/view/ContainerStatus"
+            },
+            {
+                "table": "ShippingCompany",
+                "route": "/view/ShippingCompany"
+            },
+            {
+                "table": "Vessel",
+                "route": "/view/Vessel"
+            },
+            {
+                "table": "Voyage",
+                "route": "/view/Voyage"
+            },
+            {
+                "table": "Leg",
+                "route": "/view/Leg"
+            },
+            {
+                "table": "Port",
+                "route": "/view/Port"
+            },
+            {
+                "table": "PortPair",
+                "route": "/view/PortPair"
+            },
+            {
+                "table": "Country",
+                "route": "/view/Country"
+            },
+            {
+                "table": "Client",
+                "route": "/view/Client"
+            },
+            {
+                "table": "User",
+                "route": "/view/User"
+            },
+            {
+                "table": "Rate",
+                "route": "/view/Rate"
+            }
+        ],
+        "Context": {},
+        "Statistics": {}
+    }
+}
