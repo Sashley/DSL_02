@@ -2,121 +2,123 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S002_LineItem</h1>
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S002_LineItem</h1>
 
-    <form hx-post="{{ form_action }}" hx-target="#main-content" class="max-w-lg">
-        
-        <div class="mb-4">
-            <label for="id" class="block text-gray-700 text-sm font-bold mb-2">Id</label>
-            <input type="text" 
-                   id="id" 
-                   name="id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.id if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="manifest_id" class="block text-gray-700 text-sm font-bold mb-2">Manifest Id</label>
-            <select 
-                   id="manifest_id" 
-                   name="manifest_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   >
-                <option value="">Select...</option>
-                {{% for related in manifests %}}
-                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.manifest_id == related.id else '' }}}}>
-                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
-                </option>
-                {{% endfor %}}
-            </select>
-        </div>
-        <div class="mb-4">
-            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-            <input type="text" 
-                   id="description" 
-                   name="description"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.description if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity</label>
-            <input type="text" 
-                   id="quantity" 
-                   name="quantity"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.quantity if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight</label>
-            <input type="text" 
-                   id="weight" 
-                   name="weight"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.weight if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="volume" class="block text-gray-700 text-sm font-bold mb-2">Volume</label>
-            <input type="text" 
-                   id="volume" 
-                   name="volume"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.volume if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="pack_type_id" class="block text-gray-700 text-sm font-bold mb-2">Pack Type Id</label>
-            <select 
-                   id="pack_type_id" 
-                   name="pack_type_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   >
-                <option value="">Select...</option>
-                {{% for related in pack_types %}}
-                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.pack_type_id == related.id else '' }}}}>
-                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
-                </option>
-                {{% endfor %}}
-            </select>
-        </div>
-        <div class="mb-4">
-            <label for="commodity_id" class="block text-gray-700 text-sm font-bold mb-2">Commodity Id</label>
-            <select 
-                   id="commodity_id" 
-                   name="commodity_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   >
-                <option value="">Select...</option>
-                {{% for related in commodities %}}
-                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.commodity_id == related.id else '' }}}}>
-                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
-                </option>
-                {{% endfor %}}
-            </select>
-        </div>
-        <div class="mb-4">
-            <label for="container_id" class="block text-gray-700 text-sm font-bold mb-2">Container Id</label>
-            <select 
-                   id="container_id" 
-                   name="container_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   >
-                <option value="">Select...</option>
-                {{% for related in containers %}}
-                <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.container_id == related.id else '' }}}}>
-                    {{{{ related.name if hasattr(related, 'name') else related.id }}}}
-                </option>
-                {{% endfor %}}
-            </select>
-        </div>
-        
-        <div class="flex items-center justify-between mt-6">
-            <button type="submit" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {{ 'Update' if edit else 'Create' }}
-            </button>
-            <a href="{{ url_for('crud.s002_lineitem.list_s002_lineitem') }}" 
-               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Cancel
-            </a>
-        </div>
-    </form>
+        <form hx-post="{{ form_action }}" 
+              hx-target="#main-content"
+              hx-swap="outerHTML"
+              class="space-y-6">
+            
+            <div class="flex flex-col">
+                <label for="manifest_id" class="text-sm font-semibold text-gray-600 mb-1">Manifest</label>
+                <select id="manifest_id" 
+                        name="manifest_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in manifests %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.manifest_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="description" class="text-sm font-semibold text-gray-600 mb-1">Description</label>
+                <input type="text" 
+                       id="description" 
+                       name="description"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.description if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="quantity" class="text-sm font-semibold text-gray-600 mb-1">Quantity</label>
+                <input type="number" 
+                       id="quantity" 
+                       name="quantity"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.quantity if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="weight" class="text-sm font-semibold text-gray-600 mb-1">Weight</label>
+                <input type="number" 
+                       id="weight" 
+                       name="weight"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.weight if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="volume" class="text-sm font-semibold text-gray-600 mb-1">Volume</label>
+                <input type="number" 
+                       id="volume" 
+                       name="volume"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.volume if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="pack_type_id" class="text-sm font-semibold text-gray-600 mb-1">Pack Type</label>
+                <select id="pack_type_id" 
+                        name="pack_type_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in packtypes %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.pack_type_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="commodity_id" class="text-sm font-semibold text-gray-600 mb-1">Commodity</label>
+                <select id="commodity_id" 
+                        name="commodity_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in commoditys %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.commodity_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="container_id" class="text-sm font-semibold text-gray-600 mb-1">Container</label>
+                <select id="container_id" 
+                        name="container_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in containers %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.container_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="user_id" class="text-sm font-semibold text-gray-600 mb-1">User</label>
+                <select id="user_id" 
+                        name="user_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in users %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.user_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ url_for('crud.s002_lineitem.list_s002_lineitem') }}" 
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    {{ 'Update' if edit else 'Create' }}
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

@@ -9,52 +9,41 @@
               hx-target="#main-content"
               hx-swap="outerHTML"
               class="space-y-6">
+            
             <div class="flex flex-col">
-                <label for="id" class="text-sm font-semibold text-gray-600 mb-1">ID</label>
-                <input type="text" 
-                       id="id" 
-                       name="id"
-                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       value="{{ item.id if edit else '' }}">
-            </div>
-
-            <div class="flex flex-col">
-                <label for="bill_of_lading" class="text-sm font-semibold text-gray-600 mb-1">Bill of Lading</label>
+                <label for="bill_of_lading" class="text-sm font-semibold text-gray-600 mb-1">Bill Of Lading</label>
                 <input type="text" 
                        id="bill_of_lading" 
                        name="bill_of_lading"
                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                        value="{{ item.bill_of_lading if edit else '' }}">
             </div>
-
             <div class="flex flex-col">
                 <label for="shipper_id" class="text-sm font-semibold text-gray-600 mb-1">Shipper</label>
                 <select id="shipper_id" 
                         name="shipper_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {% for related in shippers %}
+                    {% for related in clients %}
                     <option value="{{ related.id }}" {{ 'selected' if edit and item.shipper_id == related.id else '' }}>
                         {{ related.name if hasattr(related, 'name') else related.id }}
                     </option>
                     {% endfor %}
                 </select>
             </div>
-
             <div class="flex flex-col">
                 <label for="consignee_id" class="text-sm font-semibold text-gray-600 mb-1">Consignee</label>
                 <select id="consignee_id" 
                         name="consignee_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {% for related in consignees %}
+                    {% for related in clients %}
                     <option value="{{ related.id }}" {{ 'selected' if edit and item.consignee_id == related.id else '' }}>
                         {{ related.name if hasattr(related, 'name') else related.id }}
                     </option>
                     {% endfor %}
                 </select>
             </div>
-
             <div class="flex flex-col">
                 <label for="vessel_id" class="text-sm font-semibold text-gray-600 mb-1">Vessel</label>
                 <select id="vessel_id" 
@@ -68,7 +57,6 @@
                     {% endfor %}
                 </select>
             </div>
-
             <div class="flex flex-col">
                 <label for="voyage_id" class="text-sm font-semibold text-gray-600 mb-1">Voyage</label>
                 <select id="voyage_id" 
@@ -82,9 +70,8 @@
                     {% endfor %}
                 </select>
             </div>
-
             <div class="flex flex-col">
-                <label for="port_of_loading_id" class="text-sm font-semibold text-gray-600 mb-1">Port of Loading</label>
+                <label for="port_of_loading_id" class="text-sm font-semibold text-gray-600 mb-1">Port Of Loading</label>
                 <select id="port_of_loading_id" 
                         name="port_of_loading_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -96,9 +83,8 @@
                     {% endfor %}
                 </select>
             </div>
-
             <div class="flex flex-col">
-                <label for="port_of_discharge_id" class="text-sm font-semibold text-gray-600 mb-1">Port of Discharge</label>
+                <label for="port_of_discharge_id" class="text-sm font-semibold text-gray-600 mb-1">Port Of Discharge</label>
                 <select id="port_of_discharge_id" 
                         name="port_of_discharge_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -110,25 +96,22 @@
                     {% endfor %}
                 </select>
             </div>
-
             <div class="flex flex-col">
-                <label for="place_of_delivery" class="text-sm font-semibold text-gray-600 mb-1">Place of Delivery</label>
+                <label for="place_of_delivery" class="text-sm font-semibold text-gray-600 mb-1">Place Of Delivery</label>
                 <input type="text" 
                        id="place_of_delivery" 
                        name="place_of_delivery"
                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                        value="{{ item.place_of_delivery if edit else '' }}">
             </div>
-
             <div class="flex flex-col">
-                <label for="place_of_receipt" class="text-sm font-semibold text-gray-600 mb-1">Place of Receipt</label>
+                <label for="place_of_receipt" class="text-sm font-semibold text-gray-600 mb-1">Place Of Receipt</label>
                 <input type="text" 
                        id="place_of_receipt" 
                        name="place_of_receipt"
                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                        value="{{ item.place_of_receipt if edit else '' }}">
             </div>
-
             <div class="flex flex-col">
                 <label for="clauses" class="text-sm font-semibold text-gray-600 mb-1">Clauses</label>
                 <input type="text" 
@@ -137,14 +120,26 @@
                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                        value="{{ item.clauses if edit else '' }}">
             </div>
-
             <div class="flex flex-col">
-                <label for="date_of_receipt" class="text-sm font-semibold text-gray-600 mb-1">Date of Receipt</label>
-                <input type="text" 
+                <label for="date_of_receipt" class="text-sm font-semibold text-gray-600 mb-1">Date Of Receipt</label>
+                <input type="datetime-local" 
                        id="date_of_receipt" 
                        name="date_of_receipt"
                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                        value="{{ item.date_of_receipt if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="user_id" class="text-sm font-semibold text-gray-600 mb-1">User</label>
+                <select id="user_id" 
+                        name="user_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in users %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.user_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
             
             <div class="flex justify-end space-x-4 mt-8">

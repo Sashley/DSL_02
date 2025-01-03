@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, Response
-from app.models.shipping import S001_Manifest, S015_Client, S009_Vessel
+from app.models.shipping import S001_Manifest, S015_Client, S016_User, S012_Port, S009_Vessel, S010_Voyage
 from app import db
 from sqlalchemy import or_, func
 from app.utils.relationships import get_related_data, create_s001_manifest, update_s001_manifest, delete_s001_manifest
 
 bp = Blueprint('s001_manifest', __name__)
+
+# Define relationships for this model
+relationships = [{'field_name': 'shipper_id', 'target_model': 'S015_Client', 'relationship_field': 'shipper'}, {'field_name': 'consignee_id', 'target_model': 'S015_Client', 'relationship_field': 'consignee'}, {'field_name': 'vessel_id', 'target_model': 'S009_Vessel', 'relationship_field': 'vessel'}, {'field_name': 'voyage_id', 'target_model': 'S010_Voyage', 'relationship_field': 'voyage'}, {'field_name': 'port_of_loading_id', 'target_model': 'S012_Port', 'relationship_field': 'port_of_loading'}, {'field_name': 'port_of_discharge_id', 'target_model': 'S012_Port', 'relationship_field': 'port_of_discharge'}, {'field_name': 'user_id', 'target_model': 'S016_User', 'relationship_field': 'user'}]
 
 def get_search_filter(model, search_term):
     '''Return case-insensitive search filter for the model.'''
@@ -21,13 +24,15 @@ def get_search_filter(model, search_term):
     for field in text_fields:
         if hasattr(model, field):
             if field.endswith('_id'):
-                # Handle relationship fields
-                if field == 'shipper_id':
-                    conditions.append(model.shipper.has(func.lower(S015_Client.name).like(f'%{{search_term}}%')))
-                elif field == 'consignee_id':
-                    conditions.append(model.consignee.has(func.lower(S015_Client.name).like(f'%{{search_term}}%')))
-                elif field == 'vessel_id':
-                    conditions.append(model.vessel.has(func.lower(S009_Vessel.name).like(f'%{{search_term}}%')))
+                # Get relationship info for this field
+                rel = next((r for r in relationships if r["field_name"] == field), None)
+                if rel:
+                    # Add condition for relationship search
+                    conditions.append(
+                        getattr(model, rel["relationship_field"]).has(
+                            func.lower(getattr(globals()[rel["target_model"]], 'name')).like(f'%{{search_term}}%')
+                        )
+                    )
             else:
                 # Handle regular fields
                 conditions.append(func.lower(getattr(model, field)).like(f'%{{search_term}}%'))
@@ -43,15 +48,11 @@ def list_s001_manifest():
     
     # Build query with eager loading of relationships
     query = S001_Manifest.query
-    
-    query = query.options(
-        db.joinedload(S001_Manifest.shipper),
-        db.joinedload(S001_Manifest.consignee),
-        db.joinedload(S001_Manifest.vessel),
-        db.joinedload(S001_Manifest.voyage),
-        db.joinedload(S001_Manifest.port_of_loading),
-        db.joinedload(S001_Manifest.port_of_discharge)
-    )
+    if relationships:  # Only add joinedload if there are relationships
+        query = query.options(*[
+            db.joinedload(getattr(S001_Manifest, rel["relationship_field"]))
+            for rel in relationships
+        ])
     
     # Apply search filter if provided
     search_filter = get_search_filter(S001_Manifest, search)

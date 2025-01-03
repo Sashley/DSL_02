@@ -2,53 +2,55 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S005_Container</h1>
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S005_Container</h1>
 
-    <form hx-post="{{ form_action }}" hx-target="#main-content" class="max-w-lg">
-        
-        <div class="mb-4">
-            <label for="id" class="block text-gray-700 text-sm font-bold mb-2">Id</label>
-            <input type="text" 
-                   id="id" 
-                   name="id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.id if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="number" class="block text-gray-700 text-sm font-bold mb-2">Number</label>
-            <input type="text" 
-                   id="number" 
-                   name="number"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.number if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="port_id" class="block text-gray-700 text-sm font-bold mb-2">Port Id</label>
-            <input type="text" 
-                   id="port_id" 
-                   name="port_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.port_id if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="updated" class="block text-gray-700 text-sm font-bold mb-2">Updated</label>
-            <input type="text" 
-                   id="updated" 
-                   name="updated"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.updated if edit else '' }}"></input>
-        </div>
-        
-        <div class="flex items-center justify-between mt-6">
-            <button type="submit" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {{ 'Update' if edit else 'Create' }}
-            </button>
-            <a href="{{ url_for('s005_container.list_s005_container') }}" 
-               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Cancel
-            </a>
-        </div>
-    </form>
+        <form hx-post="{{ form_action }}" 
+              hx-target="#main-content"
+              hx-swap="outerHTML"
+              class="space-y-6">
+            
+            <div class="flex flex-col">
+                <label for="number" class="text-sm font-semibold text-gray-600 mb-1">Number</label>
+                <input type="text" 
+                       id="number" 
+                       name="number"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.number if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="port_id" class="text-sm font-semibold text-gray-600 mb-1">Port</label>
+                <select id="port_id" 
+                        name="port_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in ports %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.port_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="updated" class="text-sm font-semibold text-gray-600 mb-1">Updated</label>
+                <input type="datetime-local" 
+                       id="updated" 
+                       name="updated"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.updated if edit else '' }}">
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ url_for('crud.s005_container.list_s005_container') }}" 
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    {{ 'Update' if edit else 'Create' }}
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

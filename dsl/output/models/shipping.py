@@ -7,16 +7,16 @@ from sqlalchemy import Index
 class S001_Manifest(db.Model):
     __tablename__ = 's001_manifest'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    bill_of_lading = db.Column(db.String(40), unique=True)
+    bill_of_lading = db.Column(db.String(255), unique=True)
     shipper_id = db.Column(db.Integer, db.ForeignKey("s015_client.id"))
     consignee_id = db.Column(db.Integer, db.ForeignKey("s015_client.id"))
     vessel_id = db.Column(db.Integer, db.ForeignKey("s009_vessel.id"))
     voyage_id = db.Column(db.Integer, db.ForeignKey("s010_voyage.id"))
     port_of_loading_id = db.Column(db.Integer, db.ForeignKey("s012_port.id"))
     port_of_discharge_id = db.Column(db.Integer, db.ForeignKey("s012_port.id"))
-    place_of_delivery = db.Column(db.String(40))
-    place_of_receipt = db.Column(db.String(40))
-    clauses = db.Column(db.String(40))
+    place_of_delivery = db.Column(db.String(255))
+    place_of_receipt = db.Column(db.String(255))
+    clauses = db.Column(db.String(255))
     date_of_receipt = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("s016_user.id"))
 
@@ -30,21 +30,21 @@ class S001_Manifest(db.Model):
         Index('ix_s001_manifest_user_id', 'user_id')
     )
 
-    line_items = db.relationship('S002_LineItem', backref='s001_manifest_line_items', lazy='dynamic')
-    shipper = db.relationship('S015_Client', foreign_keys=[shipper_id], backref='s001_manifest_shipper')
-    consignee = db.relationship('S015_Client', foreign_keys=[consignee_id], backref='s001_manifest_consignee')
-    vessel = db.relationship('S009_Vessel', foreign_keys=[vessel_id], backref='s001_manifest_vessel')
-    voyage = db.relationship('S010_Voyage', foreign_keys=[voyage_id], backref='s001_manifest_voyage')
-    port_of_loading = db.relationship('S012_Port', foreign_keys=[port_of_loading_id], backref='s001_manifest_port_of_loading')
-    port_of_discharge = db.relationship('S012_Port', foreign_keys=[port_of_discharge_id], backref='s001_manifest_port_of_discharge')
-    user = db.relationship('S016_User', foreign_keys=[user_id], backref='s001_manifest_user')
+    line_items = db.relationship('S002_LineItem', back_populates='manifest', lazy='dynamic')
+    shipper = db.relationship('S015_Client', foreign_keys=[shipper_id], back_populates='manifests')
+    consignee = db.relationship('S015_Client', foreign_keys=[consignee_id], back_populates='consigned_manifests')
+    vessel = db.relationship('S009_Vessel', foreign_keys=[vessel_id], back_populates='manifests')
+    voyage = db.relationship('S010_Voyage', foreign_keys=[voyage_id], back_populates='manifests')
+    port_of_loading = db.relationship('S012_Port', foreign_keys=[port_of_loading_id], back_populates=None)
+    port_of_discharge = db.relationship('S012_Port', foreign_keys=[port_of_discharge_id], back_populates=None)
+    user = db.relationship('S016_User', foreign_keys=[user_id], back_populates=None)
 
 
 class S002_LineItem(db.Model):
     __tablename__ = 's002_lineitem'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     manifest_id = db.Column(db.Integer, db.ForeignKey("s001_manifest.id"))
-    description = db.Column(db.String(40))
+    description = db.Column(db.String(255))
     quantity = db.Column(db.Integer)
     weight = db.Column(db.Integer)
     volume = db.Column(db.Integer)
@@ -61,35 +61,35 @@ class S002_LineItem(db.Model):
         Index('ix_s002_lineitem_user_id', 'user_id')
     )
 
-    manifest = db.relationship('S001_Manifest', foreign_keys=[manifest_id], backref='s002_lineitem_manifest')
-    pack_type = db.relationship('S004_PackType', foreign_keys=[pack_type_id], backref='s002_lineitem_pack_type')
-    commodity = db.relationship('S003_Commodity', foreign_keys=[commodity_id], backref='s002_lineitem_commodity')
-    container = db.relationship('S005_Container', foreign_keys=[container_id], backref='s002_lineitem_container')
-    user = db.relationship('S016_User', foreign_keys=[user_id], backref='s002_lineitem_user')
+    manifest = db.relationship('S001_Manifest', foreign_keys=[manifest_id], back_populates='line_items')
+    pack_type = db.relationship('S004_PackType', foreign_keys=[pack_type_id], back_populates='line_items')
+    commodity = db.relationship('S003_Commodity', foreign_keys=[commodity_id], back_populates='line_items')
+    container = db.relationship('S005_Container', foreign_keys=[container_id], back_populates='line_items')
+    user = db.relationship('S016_User', foreign_keys=[user_id], back_populates=None)
 
 
 class S003_Commodity(db.Model):
     __tablename__ = 's003_commodity'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
-    description = db.Column(db.String(40))
+    name = db.Column(db.String(255), unique=True)
+    description = db.Column(db.String(255))
 
-    line_items = db.relationship('S002_LineItem', backref='s003_commodity_line_items', lazy='dynamic')
+    line_items = db.relationship('S002_LineItem', back_populates='commodity', lazy='dynamic')
 
 
 class S004_PackType(db.Model):
     __tablename__ = 's004_packtype'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
-    description = db.Column(db.String(40))
+    name = db.Column(db.String(255), unique=True)
+    description = db.Column(db.String(255))
 
-    line_items = db.relationship('S002_LineItem', backref='s004_packtype_line_items', lazy='dynamic')
+    line_items = db.relationship('S002_LineItem', back_populates='pack_type', lazy='dynamic')
 
 
 class S005_Container(db.Model):
     __tablename__ = 's005_container'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    number = db.Column(db.String(40), unique=True)
+    number = db.Column(db.String(255), unique=True)
     port_id = db.Column(db.Integer, db.ForeignKey("s012_port.id"))
     updated = db.Column(db.DateTime)
 
@@ -97,9 +97,9 @@ class S005_Container(db.Model):
         Index('ix_s005_container_port_id', 'port_id')
     )
 
-    line_items = db.relationship('S002_LineItem', backref='s005_container_line_items', lazy='dynamic')
-    container_histories = db.relationship('S006_ContainerHistory', backref='s005_container_container_histories', lazy='dynamic')
-    port = db.relationship('S012_Port', foreign_keys=[port_id], backref='s005_container_port')
+    line_items = db.relationship('S002_LineItem', back_populates='container', lazy='dynamic')
+    container_histories = db.relationship('S006_ContainerHistory', back_populates='container', lazy='dynamic')
+    port = db.relationship('S012_Port', foreign_keys=[port_id], back_populates='containers')
 
 
 class S006_ContainerHistory(db.Model):
@@ -109,7 +109,7 @@ class S006_ContainerHistory(db.Model):
     port_id = db.Column(db.Integer, db.ForeignKey("s012_port.id"))
     client_id = db.Column(db.Integer, db.ForeignKey("s015_client.id"))
     container_status_id = db.Column(db.Integer, db.ForeignKey("s007_containerstatus.id"))
-    damage = db.Column(db.String(40))
+    damage = db.Column(db.String(255))
     updated = db.Column(db.DateTime)
 
     __table_args__ = (
@@ -119,47 +119,47 @@ class S006_ContainerHistory(db.Model):
         Index('ix_s006_containerhistory_container_status_id', 'container_status_id')
     )
 
-    container = db.relationship('S005_Container', foreign_keys=[container_id], backref='s006_containerhistory_container')
-    port = db.relationship('S012_Port', foreign_keys=[port_id], backref='s006_containerhistory_port')
-    client = db.relationship('S015_Client', foreign_keys=[client_id], backref='s006_containerhistory_client')
-    container_status = db.relationship('S007_ContainerStatus', foreign_keys=[container_status_id], backref='s006_containerhistory_container_status')
+    container = db.relationship('S005_Container', foreign_keys=[container_id], back_populates='container_histories')
+    port = db.relationship('S012_Port', foreign_keys=[port_id], back_populates=None)
+    client = db.relationship('S015_Client', foreign_keys=[client_id], back_populates=None)
+    container_status = db.relationship('S007_ContainerStatus', foreign_keys=[container_status_id], back_populates='container_histories')
 
 
 class S007_ContainerStatus(db.Model):
     __tablename__ = 's007_containerstatus'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40))
-    description = db.Column(db.String(40))
+    name = db.Column(db.String(255))
+    description = db.Column(db.String(255))
 
-    container_histories = db.relationship('S006_ContainerHistory', backref='s007_containerstatus_container_histories', lazy='dynamic')
+    container_histories = db.relationship('S006_ContainerHistory', back_populates='container_status', lazy='dynamic')
 
 
 class S008_ShippingCompany(db.Model):
     __tablename__ = 's008_shippingcompany'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
+    name = db.Column(db.String(255), unique=True)
 
-    vessels = db.relationship('S009_Vessel', backref='s008_shippingcompany_vessels', lazy='dynamic')
+    vessels = db.relationship('S009_Vessel', back_populates='shipping_company', lazy='dynamic')
 
 
 class S009_Vessel(db.Model):
     __tablename__ = 's009_vessel'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40))
+    name = db.Column(db.String(255))
     shipping_company_id = db.Column(db.Integer, db.ForeignKey("s008_shippingcompany.id"))
 
     __table_args__ = (
         Index('ix_s009_vessel_shipping_company_id', 'shipping_company_id')
     )
 
-    manifests = db.relationship('S001_Manifest', backref='s009_vessel_manifests', lazy='dynamic')
-    shipping_company = db.relationship('S008_ShippingCompany', foreign_keys=[shipping_company_id], backref='s009_vessel_shipping_company')
+    manifests = db.relationship('S001_Manifest', back_populates='vessel', lazy='dynamic')
+    shipping_company = db.relationship('S008_ShippingCompany', foreign_keys=[shipping_company_id], back_populates='vessels')
 
 
 class S010_Voyage(db.Model):
     __tablename__ = 's010_voyage'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
+    name = db.Column(db.String(255), unique=True)
     vessel_id = db.Column(db.Integer, db.ForeignKey("s009_vessel.id"))
     rotation_number = db.Column(db.Integer)
 
@@ -167,9 +167,9 @@ class S010_Voyage(db.Model):
         Index('ix_s010_voyage_vessel_id', 'vessel_id')
     )
 
-    legs = db.relationship('S011_Leg', backref='s010_voyage_legs', lazy='dynamic')
-    manifests = db.relationship('S001_Manifest', backref='s010_voyage_manifests', lazy='dynamic')
-    vessel = db.relationship('S009_Vessel', foreign_keys=[vessel_id], backref='s010_voyage_vessel')
+    legs = db.relationship('S011_Leg', back_populates='voyage', lazy='dynamic')
+    manifests = db.relationship('S001_Manifest', back_populates='voyage', lazy='dynamic')
+    vessel = db.relationship('S009_Vessel', foreign_keys=[vessel_id], back_populates='voyages')
 
 
 class S011_Leg(db.Model):
@@ -186,23 +186,23 @@ class S011_Leg(db.Model):
         Index('ix_s011_leg_port_id', 'port_id')
     )
 
-    voyage = db.relationship('S010_Voyage', foreign_keys=[voyage_id], backref='s011_leg_voyage')
-    port = db.relationship('S012_Port', foreign_keys=[port_id], backref='s011_leg_port')
+    voyage = db.relationship('S010_Voyage', foreign_keys=[voyage_id], back_populates='legs')
+    port = db.relationship('S012_Port', foreign_keys=[port_id], back_populates='legs')
 
 
 class S012_Port(db.Model):
     __tablename__ = 's012_port'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
+    name = db.Column(db.String(255), unique=True)
     country_id = db.Column(db.Integer, db.ForeignKey("s014_country.id"))
-    prefix = db.Column(db.String(40))
+    prefix = db.Column(db.String(255))
 
     __table_args__ = (
         Index('ix_s012_port_country_id', 'country_id')
     )
 
-    containers = db.relationship('S005_Container', backref='s012_port_containers', lazy='dynamic')
-    country = db.relationship('S014_Country', foreign_keys=[country_id], backref='s012_port_country')
+    containers = db.relationship('S005_Container', back_populates='port', lazy='dynamic')
+    country = db.relationship('S014_Country', foreign_keys=[country_id], back_populates='ports')
 
 
 class S013_PortPair(db.Model):
@@ -218,47 +218,47 @@ class S013_PortPair(db.Model):
         Index('ix_s013_portpair_pod_id', 'pod_id')
     )
 
-    port_of_loading = db.relationship('S012_Port', foreign_keys=[pol_id], backref='s013_portpair_port_of_loading')
-    port_of_discharge = db.relationship('S012_Port', foreign_keys=[pod_id], backref='s013_portpair_port_of_discharge')
+    port_of_loading = db.relationship('S012_Port', foreign_keys=[pol_id], back_populates='port_of_loading')
+    port_of_discharge = db.relationship('S012_Port', foreign_keys=[pod_id], back_populates='port_of_discharge')
 
 
 class S014_Country(db.Model):
     __tablename__ = 's014_country'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
+    name = db.Column(db.String(255), unique=True)
 
-    ports = db.relationship('S012_Port', backref='s014_country_ports', lazy='dynamic')
+    ports = db.relationship('S012_Port', back_populates='country', lazy='dynamic')
 
 
 class S015_Client(db.Model):
     __tablename__ = 's015_client'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
-    address = db.Column(db.String(40))
-    town = db.Column(db.String(40))
+    name = db.Column(db.String(255), unique=True)
+    address = db.Column(db.String(255))
+    town = db.Column(db.String(255))
     country_id = db.Column(db.Integer, db.ForeignKey("s014_country.id"))
-    contact_person = db.Column(db.String(40))
-    email = db.Column(db.String(40))
-    phone = db.Column(db.String(40))
+    contact_person = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    phone = db.Column(db.String(255))
 
     __table_args__ = (
         Index('ix_s015_client_country_id', 'country_id')
     )
 
-    manifests = db.relationship('S001_Manifest', backref='s015_client_manifests', lazy='dynamic')
-    consigned_manifests = db.relationship('S001_Manifest', backref='s015_client_consigned_manifests', lazy='dynamic')
-    country = db.relationship('S014_Country', foreign_keys=[country_id], backref='s015_client_country')
+    manifests = db.relationship('S001_Manifest', back_populates='shipper', lazy='dynamic')
+    consigned_manifests = db.relationship('S001_Manifest', back_populates='consignee', lazy='dynamic')
+    country = db.relationship('S014_Country', foreign_keys=[country_id], back_populates='clients')
 
 
 class S016_User(db.Model):
     __tablename__ = 's016_user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = db.Column(db.String(40), unique=True)
-    email = db.Column(db.String(40))
-    password_hash = db.Column(db.String(40))
+    name = db.Column(db.String(255), unique=True)
+    email = db.Column(db.String(255))
+    password_hash = db.Column(db.String(255))
 
-    manifests = db.relationship('S001_Manifest', backref='s016_user_manifests', lazy='dynamic')
-    line_items = db.relationship('S002_LineItem', backref='s016_user_line_items', lazy='dynamic')
+    manifests = db.relationship('S001_Manifest', back_populates=None, lazy='dynamic')
+    line_items = db.relationship('S002_LineItem', back_populates=None, lazy='dynamic')
 
 
 class S017_Rate(db.Model):
@@ -277,8 +277,8 @@ class S017_Rate(db.Model):
         Index('ix_s017_rate_client_id', 'client_id')
     )
 
-    commodity = db.relationship('S003_Commodity', foreign_keys=[commodity_id], backref='s017_rate_commodity')
-    pack_type = db.relationship('S004_PackType', foreign_keys=[pack_type_id], backref='s017_rate_pack_type')
-    client = db.relationship('S015_Client', foreign_keys=[client_id], backref='s017_rate_client')
+    commodity = db.relationship('S003_Commodity', foreign_keys=[commodity_id], back_populates='rates')
+    pack_type = db.relationship('S004_PackType', foreign_keys=[pack_type_id], back_populates='rates')
+    client = db.relationship('S015_Client', foreign_keys=[client_id], back_populates='rates')
 
 

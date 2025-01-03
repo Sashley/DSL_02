@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, Response
-from app.models.shipping import S015_Client, S015_Client, S009_Vessel
+from app.models.shipping import S015_Client, S014_Country
 from app import db
 from sqlalchemy import or_, func
 
 bp = Blueprint('s015_client', __name__)
+
+# Define relationships for this model
+relationships = [{'field_name': 'country_id', 'target_model': 'S014_Country', 'relationship_field': 'country'}]
 
 def get_search_filter(model, search_term):
     '''Return case-insensitive search filter for the model.'''
@@ -20,13 +23,15 @@ def get_search_filter(model, search_term):
     for field in text_fields:
         if hasattr(model, field):
             if field.endswith('_id'):
-                # Handle relationship fields
-                if field == 'shipper_id':
-                    conditions.append(model.shipper.has(func.lower(S015_Client.name).like(f'%{{search_term}}%')))
-                elif field == 'consignee_id':
-                    conditions.append(model.consignee.has(func.lower(S015_Client.name).like(f'%{{search_term}}%')))
-                elif field == 'vessel_id':
-                    conditions.append(model.vessel.has(func.lower(S009_Vessel.name).like(f'%{{search_term}}%')))
+                # Get relationship info for this field
+                rel = next((r for r in relationships if r["field_name"] == field), None)
+                if rel:
+                    # Add condition for relationship search
+                    conditions.append(
+                        getattr(model, rel["relationship_field"]).has(
+                            func.lower(getattr(globals()[rel["target_model"]], 'name')).like(f'%{{search_term}}%')
+                        )
+                    )
             else:
                 # Handle regular fields
                 conditions.append(func.lower(getattr(model, field)).like(f'%{{search_term}}%'))
@@ -42,7 +47,11 @@ def list_s015_client():
     
     # Build query with eager loading of relationships
     query = S015_Client.query
-    
+    if relationships:  # Only add joinedload if there are relationships
+        query = query.options(*[
+            db.joinedload(getattr(S015_Client, rel["relationship_field"]))
+            for rel in relationships
+        ])
     
     # Apply search filter if provided
     search_filter = get_search_filter(S015_Client, search)

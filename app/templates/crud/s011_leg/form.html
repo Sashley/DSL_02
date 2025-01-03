@@ -2,69 +2,76 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S011_Leg</h1>
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">{{ 'Edit ' if edit else 'Add New ' }}S011_Leg</h1>
 
-    <form hx-post="{{ form_action }}" hx-target="#main-content" class="max-w-lg">
-        
-        <div class="mb-4">
-            <label for="id" class="block text-gray-700 text-sm font-bold mb-2">Id</label>
-            <input type="text" 
-                   id="id" 
-                   name="id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.id if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="voyage_id" class="block text-gray-700 text-sm font-bold mb-2">Voyage Id</label>
-            <input type="text" 
-                   id="voyage_id" 
-                   name="voyage_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.voyage_id if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="port_id" class="block text-gray-700 text-sm font-bold mb-2">Port Id</label>
-            <input type="text" 
-                   id="port_id" 
-                   name="port_id"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.port_id if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="leg_number" class="block text-gray-700 text-sm font-bold mb-2">Leg Number</label>
-            <input type="text" 
-                   id="leg_number" 
-                   name="leg_number"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.leg_number if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="eta" class="block text-gray-700 text-sm font-bold mb-2">Eta</label>
-            <input type="text" 
-                   id="eta" 
-                   name="eta"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.eta if edit else '' }}"></input>
-        </div>
-        <div class="mb-4">
-            <label for="etd" class="block text-gray-700 text-sm font-bold mb-2">Etd</label>
-            <input type="text" 
-                   id="etd" 
-                   name="etd"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   value="{{ item.etd if edit else '' }}"></input>
-        </div>
-        
-        <div class="flex items-center justify-between mt-6">
-            <button type="submit" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {{ 'Update' if edit else 'Create' }}
-            </button>
-            <a href="{{ url_for('s011_leg.list_s011_leg') }}" 
-               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Cancel
-            </a>
-        </div>
-    </form>
+        <form hx-post="{{ form_action }}" 
+              hx-target="#main-content"
+              hx-swap="outerHTML"
+              class="space-y-6">
+            
+            <div class="flex flex-col">
+                <label for="voyage_id" class="text-sm font-semibold text-gray-600 mb-1">Voyage</label>
+                <select id="voyage_id" 
+                        name="voyage_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in voyages %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.voyage_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="port_id" class="text-sm font-semibold text-gray-600 mb-1">Port</label>
+                <select id="port_id" 
+                        name="port_id"
+                        class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select...</option>
+                    {% for related in ports %}
+                    <option value="{{ related.id }}" {{ 'selected' if edit and item.port_id == related.id else '' }}>
+                        {{ related.name if hasattr(related, 'name') else related.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label for="leg_number" class="text-sm font-semibold text-gray-600 mb-1">Leg Number</label>
+                <input type="number" 
+                       id="leg_number" 
+                       name="leg_number"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.leg_number if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="eta" class="text-sm font-semibold text-gray-600 mb-1">Eta</label>
+                <input type="datetime-local" 
+                       id="eta" 
+                       name="eta"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.eta if edit else '' }}">
+            </div>
+            <div class="flex flex-col">
+                <label for="etd" class="text-sm font-semibold text-gray-600 mb-1">Etd</label>
+                <input type="datetime-local" 
+                       id="etd" 
+                       name="etd"
+                       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ item.etd if edit else '' }}">
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ url_for('crud.s011_leg.list_s011_leg') }}" 
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded">
+                    {{ 'Update' if edit else 'Create' }}
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
