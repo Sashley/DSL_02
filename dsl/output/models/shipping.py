@@ -27,17 +27,17 @@ class S001_Manifest(db.Model):
         Index('ix_s001_manifest_voyage_id', 'voyage_id'),
         Index('ix_s001_manifest_port_of_loading_id', 'port_of_loading_id'),
         Index('ix_s001_manifest_port_of_discharge_id', 'port_of_discharge_id'),
-        Index('ix_s001_manifest_user_id', 'user_id')
+        Index('ix_s001_manifest_user_id', 'user_id'),
     )
 
-    line_items = db.relationship('S002_LineItem', back_populates='manifest', lazy='dynamic')
-    shipper = db.relationship('S015_Client', foreign_keys=[shipper_id], back_populates='manifests')
-    consignee = db.relationship('S015_Client', foreign_keys=[consignee_id], back_populates='consigned_manifests')
+    shipper = db.relationship('S015_Client', foreign_keys=[shipper_id], back_populates='manifest_as_shippers')
+    consignee = db.relationship('S015_Client', foreign_keys=[consignee_id], back_populates='manifest_as_consignees')
     vessel = db.relationship('S009_Vessel', foreign_keys=[vessel_id], back_populates='manifests')
     voyage = db.relationship('S010_Voyage', foreign_keys=[voyage_id], back_populates='manifests')
-    port_of_loading = db.relationship('S012_Port', foreign_keys=[port_of_loading_id], back_populates=None)
-    port_of_discharge = db.relationship('S012_Port', foreign_keys=[port_of_discharge_id], back_populates=None)
-    user = db.relationship('S016_User', foreign_keys=[user_id], back_populates=None)
+    port_of_loading = db.relationship('S012_Port', foreign_keys=[port_of_loading_id], back_populates='manifest_as_port_of_loadings')
+    port_of_discharge = db.relationship('S012_Port', foreign_keys=[port_of_discharge_id], back_populates='manifest_as_port_of_discharges')
+    user = db.relationship('S016_User', foreign_keys=[user_id], back_populates='manifests')
+    line_items = db.relationship('S002_LineItem', back_populates='manifest', lazy='dynamic')
 
 
 class S002_LineItem(db.Model):
@@ -58,14 +58,14 @@ class S002_LineItem(db.Model):
         Index('ix_s002_lineitem_pack_type_id', 'pack_type_id'),
         Index('ix_s002_lineitem_commodity_id', 'commodity_id'),
         Index('ix_s002_lineitem_container_id', 'container_id'),
-        Index('ix_s002_lineitem_user_id', 'user_id')
+        Index('ix_s002_lineitem_user_id', 'user_id'),
     )
 
     manifest = db.relationship('S001_Manifest', foreign_keys=[manifest_id], back_populates='line_items')
     pack_type = db.relationship('S004_PackType', foreign_keys=[pack_type_id], back_populates='line_items')
     commodity = db.relationship('S003_Commodity', foreign_keys=[commodity_id], back_populates='line_items')
     container = db.relationship('S005_Container', foreign_keys=[container_id], back_populates='line_items')
-    user = db.relationship('S016_User', foreign_keys=[user_id], back_populates=None)
+    user = db.relationship('S016_User', foreign_keys=[user_id], back_populates='line_items')
 
 
 class S003_Commodity(db.Model):
@@ -75,6 +75,7 @@ class S003_Commodity(db.Model):
     description = db.Column(db.String(255))
 
     line_items = db.relationship('S002_LineItem', back_populates='commodity', lazy='dynamic')
+    rates = db.relationship('S017_Rate', back_populates='commodity', lazy='dynamic')
 
 
 class S004_PackType(db.Model):
@@ -84,6 +85,7 @@ class S004_PackType(db.Model):
     description = db.Column(db.String(255))
 
     line_items = db.relationship('S002_LineItem', back_populates='pack_type', lazy='dynamic')
+    rates = db.relationship('S017_Rate', back_populates='pack_type', lazy='dynamic')
 
 
 class S005_Container(db.Model):
@@ -94,12 +96,12 @@ class S005_Container(db.Model):
     updated = db.Column(db.DateTime)
 
     __table_args__ = (
-        Index('ix_s005_container_port_id', 'port_id')
+        Index('ix_s005_container_port_id', 'port_id'),
     )
 
     line_items = db.relationship('S002_LineItem', back_populates='container', lazy='dynamic')
-    container_histories = db.relationship('S006_ContainerHistory', back_populates='container', lazy='dynamic')
     port = db.relationship('S012_Port', foreign_keys=[port_id], back_populates='containers')
+    container_histories = db.relationship('S006_ContainerHistory', back_populates='container', lazy='dynamic')
 
 
 class S006_ContainerHistory(db.Model):
@@ -116,12 +118,12 @@ class S006_ContainerHistory(db.Model):
         Index('ix_s006_containerhistory_container_id', 'container_id'),
         Index('ix_s006_containerhistory_port_id', 'port_id'),
         Index('ix_s006_containerhistory_client_id', 'client_id'),
-        Index('ix_s006_containerhistory_container_status_id', 'container_status_id')
+        Index('ix_s006_containerhistory_container_status_id', 'container_status_id'),
     )
 
     container = db.relationship('S005_Container', foreign_keys=[container_id], back_populates='container_histories')
-    port = db.relationship('S012_Port', foreign_keys=[port_id], back_populates=None)
-    client = db.relationship('S015_Client', foreign_keys=[client_id], back_populates=None)
+    port = db.relationship('S012_Port', foreign_keys=[port_id], back_populates='container_histories')
+    client = db.relationship('S015_Client', foreign_keys=[client_id], back_populates='container_histories')
     container_status = db.relationship('S007_ContainerStatus', foreign_keys=[container_status_id], back_populates='container_histories')
 
 
@@ -149,11 +151,12 @@ class S009_Vessel(db.Model):
     shipping_company_id = db.Column(db.Integer, db.ForeignKey("s008_shippingcompany.id"))
 
     __table_args__ = (
-        Index('ix_s009_vessel_shipping_company_id', 'shipping_company_id')
+        Index('ix_s009_vessel_shipping_company_id', 'shipping_company_id'),
     )
 
     manifests = db.relationship('S001_Manifest', back_populates='vessel', lazy='dynamic')
     shipping_company = db.relationship('S008_ShippingCompany', foreign_keys=[shipping_company_id], back_populates='vessels')
+    voyages = db.relationship('S010_Voyage', back_populates='vessel', lazy='dynamic')
 
 
 class S010_Voyage(db.Model):
@@ -164,12 +167,12 @@ class S010_Voyage(db.Model):
     rotation_number = db.Column(db.Integer)
 
     __table_args__ = (
-        Index('ix_s010_voyage_vessel_id', 'vessel_id')
+        Index('ix_s010_voyage_vessel_id', 'vessel_id'),
     )
 
-    legs = db.relationship('S011_Leg', back_populates='voyage', lazy='dynamic')
     manifests = db.relationship('S001_Manifest', back_populates='voyage', lazy='dynamic')
     vessel = db.relationship('S009_Vessel', foreign_keys=[vessel_id], back_populates='voyages')
+    legs = db.relationship('S011_Leg', back_populates='voyage', lazy='dynamic')
 
 
 class S011_Leg(db.Model):
@@ -183,7 +186,7 @@ class S011_Leg(db.Model):
 
     __table_args__ = (
         Index('ix_s011_leg_voyage_id', 'voyage_id'),
-        Index('ix_s011_leg_port_id', 'port_id')
+        Index('ix_s011_leg_port_id', 'port_id'),
     )
 
     voyage = db.relationship('S010_Voyage', foreign_keys=[voyage_id], back_populates='legs')
@@ -198,11 +201,17 @@ class S012_Port(db.Model):
     prefix = db.Column(db.String(255))
 
     __table_args__ = (
-        Index('ix_s012_port_country_id', 'country_id')
+        Index('ix_s012_port_country_id', 'country_id'),
     )
 
+    manifest_as_port_of_loadings = db.relationship('S001_Manifest', back_populates='port_of_loading', lazy='dynamic')
+    manifest_as_port_of_discharges = db.relationship('S001_Manifest', back_populates='port_of_discharge', lazy='dynamic')
     containers = db.relationship('S005_Container', back_populates='port', lazy='dynamic')
+    container_histories = db.relationship('S006_ContainerHistory', back_populates='port', lazy='dynamic')
+    legs = db.relationship('S011_Leg', back_populates='port', lazy='dynamic')
     country = db.relationship('S014_Country', foreign_keys=[country_id], back_populates='ports')
+    port_pair_as_pols = db.relationship('S013_PortPair', back_populates='pol', lazy='dynamic')
+    port_pair_as_pods = db.relationship('S013_PortPair', back_populates='pod', lazy='dynamic')
 
 
 class S013_PortPair(db.Model):
@@ -215,11 +224,11 @@ class S013_PortPair(db.Model):
 
     __table_args__ = (
         Index('ix_s013_portpair_pol_id', 'pol_id'),
-        Index('ix_s013_portpair_pod_id', 'pod_id')
+        Index('ix_s013_portpair_pod_id', 'pod_id'),
     )
 
-    port_of_loading = db.relationship('S012_Port', foreign_keys=[pol_id], back_populates='port_of_loading')
-    port_of_discharge = db.relationship('S012_Port', foreign_keys=[pod_id], back_populates='port_of_discharge')
+    pol = db.relationship('S012_Port', foreign_keys=[pol_id], back_populates='port_pair_as_pols')
+    pod = db.relationship('S012_Port', foreign_keys=[pod_id], back_populates='port_pair_as_pods')
 
 
 class S014_Country(db.Model):
@@ -228,6 +237,7 @@ class S014_Country(db.Model):
     name = db.Column(db.String(255), unique=True)
 
     ports = db.relationship('S012_Port', back_populates='country', lazy='dynamic')
+    clients = db.relationship('S015_Client', back_populates='country', lazy='dynamic')
 
 
 class S015_Client(db.Model):
@@ -242,12 +252,14 @@ class S015_Client(db.Model):
     phone = db.Column(db.String(255))
 
     __table_args__ = (
-        Index('ix_s015_client_country_id', 'country_id')
+        Index('ix_s015_client_country_id', 'country_id'),
     )
 
-    manifests = db.relationship('S001_Manifest', back_populates='shipper', lazy='dynamic')
-    consigned_manifests = db.relationship('S001_Manifest', back_populates='consignee', lazy='dynamic')
+    manifest_as_shippers = db.relationship('S001_Manifest', back_populates='shipper', lazy='dynamic')
+    manifest_as_consignees = db.relationship('S001_Manifest', back_populates='consignee', lazy='dynamic')
+    container_histories = db.relationship('S006_ContainerHistory', back_populates='client', lazy='dynamic')
     country = db.relationship('S014_Country', foreign_keys=[country_id], back_populates='clients')
+    rates = db.relationship('S017_Rate', back_populates='client', lazy='dynamic')
 
 
 class S016_User(db.Model):
@@ -257,8 +269,8 @@ class S016_User(db.Model):
     email = db.Column(db.String(255))
     password_hash = db.Column(db.String(255))
 
-    manifests = db.relationship('S001_Manifest', back_populates=None, lazy='dynamic')
-    line_items = db.relationship('S002_LineItem', back_populates=None, lazy='dynamic')
+    manifests = db.relationship('S001_Manifest', back_populates='user', lazy='dynamic')
+    line_items = db.relationship('S002_LineItem', back_populates='user', lazy='dynamic')
 
 
 class S017_Rate(db.Model):
@@ -274,7 +286,7 @@ class S017_Rate(db.Model):
     __table_args__ = (
         Index('ix_s017_rate_commodity_id', 'commodity_id'),
         Index('ix_s017_rate_pack_type_id', 'pack_type_id'),
-        Index('ix_s017_rate_client_id', 'client_id')
+        Index('ix_s017_rate_client_id', 'client_id'),
     )
 
     commodity = db.relationship('S003_Commodity', foreign_keys=[commodity_id], back_populates='rates')

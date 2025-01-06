@@ -193,8 +193,9 @@ def second_pass_generate_models(file_path, model_map):
                         
                         # Look for matching relationship in target model
                         for rel in relationships.get(target_model, []):
-                            if rel["target_model"] == current_model_name:
-                                back_populates = rel["field_name"]
+                            # Check if this relationship targets our current model
+                            if rel["target_model"] == model_map.get(current_model_name):
+                                back_populates = rel["back_populates"]
                                 break
                         
                         # Special handling for PortPair relationships
@@ -214,10 +215,18 @@ def second_pass_generate_models(file_path, model_map):
                                     "foreign_keys": [field_name]
                                 }
                         else:
+                            # Find the matching relationship in the target model
+                            target_rel = None
+                            for rel in relationships.get(target_model, []):
+                                if rel["target_model"] == model_map.get(current_model_name):
+                                    target_rel = rel
+                                    break
+                            
+                            # Use the relationship_name from the target model's relationship
                             field_def["relationship"] = {
                                 "field_name": rel_name,
                                 "target_model": target_model,
-                                "back_populates": back_populates or rel_name,
+                                "back_populates": target_rel["relationship_name"] if target_rel else rel_name,
                                 "foreign_keys": [field_name]
                             }
 

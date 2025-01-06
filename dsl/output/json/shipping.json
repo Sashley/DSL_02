@@ -126,15 +126,7 @@
                     }
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "manifest_line_item",
-                    "target_model": "S002_LineItem",
-                    "field_name": "line_items",
-                    "relationship_name": "manifest_line_item"
-                }
-            ],
+            "Relationships": [],
             "Indices": {
                 "idx_shipper_id": [
                     "shipper_id"
@@ -187,10 +179,6 @@
                     {
                         "related_table": "S016_User",
                         "route": "/view/S016_User?filter=user_id"
-                    },
-                    {
-                        "drill_down": "S002_LineItem",
-                        "route": "/view/S002_LineItem?filter=line_items"
                     }
                 ],
                 "Statistics": []
@@ -354,23 +342,10 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "commodity_line_item",
-                    "target_model": "S002_LineItem",
-                    "field_name": "line_items",
-                    "relationship_name": "commodity_line_item"
-                }
-            ],
+            "Relationships": [],
             "Indices": {},
             "Menus": {
-                "Context": [
-                    {
-                        "drill_down": "S002_LineItem",
-                        "route": "/view/S002_LineItem?filter=line_items"
-                    }
-                ],
+                "Context": [],
                 "Statistics": []
             }
         },
@@ -394,23 +369,10 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "pack_type_line_item",
-                    "target_model": "S002_LineItem",
-                    "field_name": "line_items",
-                    "relationship_name": "pack_type_line_item"
-                }
-            ],
+            "Relationships": [],
             "Indices": {},
             "Menus": {
-                "Context": [
-                    {
-                        "drill_down": "S002_LineItem",
-                        "route": "/view/S002_LineItem?filter=line_items"
-                    }
-                ],
+                "Context": [],
                 "Statistics": []
             }
         },
@@ -446,22 +408,7 @@
                     "default": "now()"
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "container_line_item",
-                    "target_model": "S002_LineItem",
-                    "field_name": "line_items",
-                    "relationship_name": "container_line_item"
-                },
-                {
-                    "type": "one-to-many",
-                    "back_populates": "container_container_history",
-                    "target_model": "S006_ContainerHistory",
-                    "field_name": "container_histories",
-                    "relationship_name": "container_container_history"
-                }
-            ],
+            "Relationships": [],
             "Indices": {
                 "idx_port_id": [
                     "port_id"
@@ -472,14 +419,6 @@
                     {
                         "related_table": "S012_Port",
                         "route": "/view/S012_Port?filter=port_id"
-                    },
-                    {
-                        "drill_down": "S002_LineItem",
-                        "route": "/view/S002_LineItem?filter=line_items"
-                    },
-                    {
-                        "drill_down": "S006_ContainerHistory",
-                        "route": "/view/S006_ContainerHistory?filter=container_histories"
                     }
                 ],
                 "Statistics": []
@@ -611,23 +550,10 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "container_status_container_history",
-                    "target_model": "S006_ContainerHistory",
-                    "field_name": "container_histories",
-                    "relationship_name": "container_status_container_history"
-                }
-            ],
+            "Relationships": [],
             "Indices": {},
             "Menus": {
-                "Context": [
-                    {
-                        "drill_down": "S006_ContainerHistory",
-                        "route": "/view/S006_ContainerHistory?filter=container_histories"
-                    }
-                ],
+                "Context": [],
                 "Statistics": []
             }
         },
@@ -646,23 +572,10 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "shipping_company_vessel",
-                    "target_model": "S009_Vessel",
-                    "field_name": "vessels",
-                    "relationship_name": "shipping_company_vessel"
-                }
-            ],
+            "Relationships": [],
             "Indices": {},
             "Menus": {
-                "Context": [
-                    {
-                        "drill_down": "S009_Vessel",
-                        "route": "/view/S009_Vessel?filter=vessels"
-                    }
-                ],
+                "Context": [],
                 "Statistics": []
             }
         },
@@ -693,15 +606,7 @@
                     }
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "vessel_manifest",
-                    "target_model": "S001_Manifest",
-                    "field_name": "manifests",
-                    "relationship_name": "vessel_manifest"
-                }
-            ],
+            "Relationships": [],
             "Indices": {
                 "idx_shipping_company_id": [
                     "shipping_company_id"
@@ -712,10 +617,6 @@
                     {
                         "related_table": "S008_ShippingCompany",
                         "route": "/view/S008_ShippingCompany?filter=shipping_company_id"
-                    },
-                    {
-                        "drill_down": "S001_Manifest",
-                        "route": "/view/S001_Manifest?filter=manifests"
                     }
                 ],
                 "Statistics": []
@@ -754,22 +655,7 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "voyage_leg",
-                    "target_model": "S011_Leg",
-                    "field_name": "legs",
-                    "relationship_name": "voyage_leg"
-                },
-                {
-                    "type": "one-to-many",
-                    "back_populates": "voyagemanifest",
-                    "target_model": "S001_Manifest",
-                    "field_name": "manifests",
-                    "relationship_name": "voyagemanifest"
-                }
-            ],
+            "Relationships": [],
             "Indices": {
                 "idx_vessel_id": [
                     "vessel_id"
@@ -780,14 +666,6 @@
                     {
                         "related_table": "S009_Vessel",
                         "route": "/view/S009_Vessel?filter=vessel_id"
-                    },
-                    {
-                        "drill_down": "S011_Leg",
-                        "route": "/view/S011_Leg?filter=legs"
-                    },
-                    {
-                        "drill_down": "S001_Manifest",
-                        "route": "/view/S001_Manifest?filter=manifests"
                     }
                 ],
                 "Statistics": []
@@ -897,15 +775,7 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "port_container",
-                    "target_model": "S005_Container",
-                    "field_name": "containers",
-                    "relationship_name": "port_container"
-                }
-            ],
+            "Relationships": [],
             "Indices": {
                 "idx_country_id": [
                     "country_id"
@@ -916,10 +786,6 @@
                     {
                         "related_table": "S014_Country",
                         "route": "/view/S014_Country?filter=country_id"
-                    },
-                    {
-                        "drill_down": "S005_Container",
-                        "route": "/view/S005_Container?filter=containers"
                     }
                 ],
                 "Statistics": []
@@ -1008,23 +874,10 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "country_port",
-                    "target_model": "S012_Port",
-                    "field_name": "ports",
-                    "relationship_name": "country_port"
-                }
-            ],
+            "Relationships": [],
             "Indices": {},
             "Menus": {
-                "Context": [
-                    {
-                        "drill_down": "S012_Port",
-                        "route": "/view/S012_Port?filter=ports"
-                    }
-                ],
+                "Context": [],
                 "Statistics": []
             }
         },
@@ -1081,22 +934,7 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "client_manifest_shipper",
-                    "target_model": "S001_Manifest",
-                    "field_name": "manifests",
-                    "relationship_name": "client_manifest_shipper"
-                },
-                {
-                    "type": "one-to-many",
-                    "back_populates": "client_manifest_consignee",
-                    "target_model": "S001_Manifest",
-                    "field_name": "consigned_manifests",
-                    "relationship_name": "client_manifest_consignee"
-                }
-            ],
+            "Relationships": [],
             "Indices": {
                 "idx_country_id": [
                     "country_id"
@@ -1107,14 +945,6 @@
                     {
                         "related_table": "S014_Country",
                         "route": "/view/S014_Country?filter=country_id"
-                    },
-                    {
-                        "drill_down": "S001_Manifest",
-                        "route": "/view/S001_Manifest?filter=manifests"
-                    },
-                    {
-                        "drill_down": "S001_Manifest",
-                        "route": "/view/S001_Manifest?filter=consigned_manifests"
                     }
                 ],
                 "Statistics": []
@@ -1145,34 +975,10 @@
                     "default": null
                 }
             },
-            "Relationships": [
-                {
-                    "type": "one-to-many",
-                    "back_populates": "user_manifest",
-                    "target_model": "S001_Manifest",
-                    "field_name": "manifests",
-                    "relationship_name": "user_manifest"
-                },
-                {
-                    "type": "one-to-many",
-                    "back_populates": "user_line_item",
-                    "target_model": "S002_LineItem",
-                    "field_name": "line_items",
-                    "relationship_name": "user_line_item"
-                }
-            ],
+            "Relationships": [],
             "Indices": {},
             "Menus": {
-                "Context": [
-                    {
-                        "drill_down": "S001_Manifest",
-                        "route": "/view/S001_Manifest?filter=manifests"
-                    },
-                    {
-                        "drill_down": "S002_LineItem",
-                        "route": "/view/S002_LineItem?filter=line_items"
-                    }
-                ],
+                "Context": [],
                 "Statistics": []
             }
         },
