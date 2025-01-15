@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.models.shipping import S001_Manifest, S015_Client, S016_User, S012_Port, S009_Vessel, S010_Voyage
 from app import db
 from sqlalchemy import or_, func
-from app.utils.relationships import get_related_data, create_s001_manifest, update_s001_manifest, delete_s001_manifest
+from app.utils.relationships.s001_manifest_helpers import get_related_data, create_s001_manifest, update_s001_manifest, delete_s001_manifest
 
 bp = Blueprint('s001_manifest', __name__)
 
@@ -47,12 +47,15 @@ def list_s001_manifest():
     search = request.args.get('search', '')
     
     # Build query with eager loading of relationships
-    query = S001_Manifest.query
-    if relationships:  # Only add joinedload if there are relationships
-        query = query.options(*[
-            db.joinedload(getattr(S001_Manifest, rel["relationship_field"]))
-            for rel in relationships
-        ])
+    query = S001_Manifest.query.options(
+        db.joinedload(S001_Manifest.shipper),
+        db.joinedload(S001_Manifest.consignee),
+        db.joinedload(S001_Manifest.vessel),
+        db.joinedload(S001_Manifest.voyage),
+        db.joinedload(S001_Manifest.port_of_loading),
+        db.joinedload(S001_Manifest.port_of_discharge),
+        db.joinedload(S001_Manifest.user)
+    )
     
     # Apply search filter if provided
     search_filter = get_search_filter(S001_Manifest, search)
@@ -99,7 +102,15 @@ def create_s001_manifest():
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 def edit_s001_manifest(id):
-    item = S001_Manifest.query.get_or_404(id)
+    item = S001_Manifest.query.options(
+        db.joinedload(S001_Manifest.shipper),
+        db.joinedload(S001_Manifest.consignee),
+        db.joinedload(S001_Manifest.vessel),
+        db.joinedload(S001_Manifest.voyage),
+        db.joinedload(S001_Manifest.port_of_loading),
+        db.joinedload(S001_Manifest.port_of_discharge),
+        db.joinedload(S001_Manifest.user)
+    ).get_or_404(id)
     
     if request.method == 'POST':
         try:
@@ -108,17 +119,13 @@ def edit_s001_manifest(id):
         except Exception as e:
             db.session.rollback()
             flash(f'Error: {str(e)}', 'error')
-            return render_template('crud/s001_manifest/form.html', 
-                                edit=True, 
-                                item=item,
-                                form_action=url_for('crud.s001_manifest.edit_s001_manifest', id=id)
-                                , **get_related_data())
-    
+    related_data = get_related_data()
+    print("Related data:", related_data)  # Debug print
     return render_template('crud/s001_manifest/form.html', 
                          edit=True, 
                          item=item,
                          form_action=url_for('crud.s001_manifest.edit_s001_manifest', id=id)
-                         , **get_related_data())
+                         , **related_data)
 
 @bp.route('/<int:id>/delete', methods=['DELETE'])
 def delete_s001_manifest(id):

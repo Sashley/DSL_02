@@ -24,7 +24,7 @@
                         name="shipper_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {% for related in clients %}
+                    {% for related in shippers %}
                     <option value="{{ related.id }}" {{ 'selected' if edit and item.shipper_id == related.id else '' }}>
                         {{ related.name if hasattr(related, 'name') else related.id }}
                     </option>
@@ -37,7 +37,7 @@
                         name="consignee_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {% for related in clients %}
+                    {% for related in consignees %}
                     <option value="{{ related.id }}" {{ 'selected' if edit and item.consignee_id == related.id else '' }}>
                         {{ related.name if hasattr(related, 'name') else related.id }}
                     </option>
@@ -76,7 +76,7 @@
                         name="port_of_loading_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {% for related in ports %}
+                    {% for related in port_of_loadings %}
                     <option value="{{ related.id }}" {{ 'selected' if edit and item.port_of_loading_id == related.id else '' }}>
                         {{ related.name if hasattr(related, 'name') else related.id }}
                     </option>
@@ -89,7 +89,7 @@
                         name="port_of_discharge_id"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {% for related in ports %}
+                    {% for related in port_of_discharges %}
                     <option value="{{ related.id }}" {{ 'selected' if edit and item.port_of_discharge_id == related.id else '' }}>
                         {{ related.name if hasattr(related, 'name') else related.id }}
                     </option>

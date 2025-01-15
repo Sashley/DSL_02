@@ -143,8 +143,8 @@ def populate_data():
 
         clients = []
         for i in range(300):
-            # Generate company name
-            company_name = f"{random.choice(company_prefixes)} {random.choice(company_types)} {random.choice(company_suffixes)}"
+            # Generate company name with unique identifier
+            company_name = f"{random.choice(company_prefixes)} {random.choice(company_types)} {random.choice(company_suffixes)} {i+1:03d}"
             
             # Generate address
             street_number = random.randint(1, 999)
@@ -213,22 +213,22 @@ def populate_data():
         # Create meaningful voyage names
         voyages = [
             S010_Voyage(
-                name=random.choice([
-                    "Asia Express Line",
-                    "Trans Pacific Service",
-                    "Europe Direct Route",
-                    "Mediterranean Link",
-                    "Atlantic Connection",
-                    "Americas Service",
-                    "Far East Loop",
-                    "Indian Ocean Circuit",
-                    "Global Express",
-                    "Pacific Rim Route"
-                ]),
+                name=f"{random.choice([
+                    'Asia Express Line',
+                    'Trans Pacific Service',
+                    'Europe Direct Route',
+                    'Mediterranean Link',
+                    'Atlantic Connection',
+                    'Americas Service',
+                    'Far East Loop',
+                    'Indian Ocean Circuit',
+                    'Global Express',
+                    'Pacific Rim Route'
+                ])} {i+1:03d}",
                 vessel_id=random.randint(1, len(vessels)),
                 rotation_number=random.randint(1, 10)
             )
-            for _ in range(100)
+            for i in range(100)
         ]
         db.session.add_all(voyages)
         db.session.flush()  # Ensure voyages have IDs for leg creation
@@ -319,7 +319,8 @@ def populate_data():
                 place_of_delivery=random.choice(["Warehouse A", "Terminal B", "Distribution Center C"]),
                 place_of_receipt=random.choice(["Factory X", "Supplier Y", "Warehouse Z"]),
                 clauses="Standard shipping terms apply",
-                date_of_receipt=datetime.now()
+                date_of_receipt=datetime.now(),
+                user_id=random.randint(1, len(users))
             )
             manifests.append(manifest)
         db.session.add_all(manifests)

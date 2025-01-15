@@ -9,6 +9,7 @@ import json
 import re
 from pathlib import Path
 from collections import defaultdict
+from relationship_analyzer import extract_relationship_metadata
 
 # Add parent directory to path so we can import our modules
 current_dir = Path(__file__).parent
@@ -144,7 +145,9 @@ def pluralize(name):
     special_cases = {
         'history': 'histories',
         'country': 'countries',
-        'commodity': 'commodities'
+        'commodity': 'commodities',
+        'company': 'companies',
+        'status': 'statuses'
     }
     
     # Handle compound words (e.g., container_history)
@@ -162,6 +165,8 @@ def pluralize(name):
     # Standard rules
     if name.endswith('y') and not name.endswith(('ay', 'ey', 'oy', 'uy')):
         return name[:-1] + 'ies'
+    if name.endswith(('s', 'sh', 'ch', 'x', 'z')):
+        return name + 'es'
     if name.endswith('s'):
         return name
     return name + 's'
@@ -179,7 +184,7 @@ def get_collection_name(model_name, role=None):
         return f"{base}_as_{role}s"
     return pluralize(base)
 
-def analyze_foreign_keys(json_data):
+def extract_relationship_metadata(json_data):
     """
     Analyze foreign key relationships to build a complete relationship map.
     Returns a dict mapping each model to its foreign key references.
@@ -224,7 +229,8 @@ def analyze_foreign_keys(json_data):
                     "type": "foreign_key",
                     "foreign_table": target_model,
                     "foreign_key": field_name,
-                    "back_populates": collection_name
+                    "back_populates": collection_name,
+                    "foreign_keys": [field_name]  # Explicitly specify which foreign key to use
                 }
                 
                 # Add corresponding collection to target
@@ -232,7 +238,8 @@ def analyze_foreign_keys(json_data):
                     "type": "one_to_many",
                     "foreign_table": model_name,
                     "foreign_key": field_name,
-                    "back_populates": base_name
+                    "back_populates": base_name,
+                    "foreign_keys": [field_name]  # Explicitly specify which foreign key to use
                 }
         
         # Process explicit relationships
@@ -319,7 +326,7 @@ def generate_relationships(json_data):
     """
     Generate SQLAlchemy relationship definitions using analyzed foreign keys.
     """
-    relationships_metadata = analyze_foreign_keys(json_data)
+    relationships_metadata = extract_relationship_metadata(json_data)
     relationships = {}
     
     print("\nProcessing relationships...")
@@ -330,20 +337,29 @@ def generate_relationships(json_data):
         print(f"\nModel: {model_name}")
         
         for rel_name, rel_info in model_info['relationships'].items():
-            if rel_info['type'] == 'foreign_key':
-                relationship_str = (
-                    f"    {rel_name} = db.relationship('{rel_info['foreign_table']}', "
-                    f"foreign_keys=[{rel_info['foreign_key']}], "
-                    f"back_populates='{rel_info['back_populates']}')"
-                )
-                model_relationships.append(relationship_str)
-            elif rel_info['type'] == 'one_to_many':
-                relationship_str = (
-                    f"    {rel_name} = db.relationship('{rel_info['foreign_table']}', "
-                    f"back_populates='{rel_info['back_populates']}', "
-                    f"lazy='dynamic')"
-                )
-                model_relationships.append(relationship_str)
+            relationship_args = []
+            
+            # Add back_populates
+            relationship_args.append(f"back_populates='{rel_info['back_populates']}'")
+            
+            # Add foreign_keys if specified
+            if rel_info.get('foreign_keys'):
+                if rel_info['type'] == 'foreign_key':
+                    relationship_args.append(f"foreign_keys=[{rel_info['foreign_key']}]")
+                else:
+                    # For one-to-many relationships, use string reference to avoid circular dependencies
+                    relationship_args.append(f"primaryjoin='{rel_info['foreign_table']}.{rel_info['foreign_key']} == {model_name}.id'")
+            
+            # Add lazy loading for collections
+            if rel_info['type'] == 'one_to_many':
+                relationship_args.append("lazy='dynamic'")
+            
+            # Build the relationship string
+            relationship_str = (
+                f"    {rel_name} = db.relationship('{rel_info['foreign_table']}', "
+                f"{', '.join(relationship_args)})"
+            )
+            model_relationships.append(relationship_str)
         
         if model_relationships:
             relationships[model_name] = model_relationships

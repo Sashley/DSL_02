@@ -2,13 +2,13 @@
     <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
         {{ item.bill_of_lading_name if 'bill_of_lading' in item.__dict__ and 'bill_of_lading'.endswith('_id') else item.bill_of_lading }}
     </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
-        {{ item.shipper_id_name if 'shipper_id' in item.__dict__ and 'shipper_id'.endswith('_id') else item.shipper_id }}
+        {{ item.shipper.name if item.shipper else '' }}
     </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
-        {{ item.consignee_id_name if 'consignee_id' in item.__dict__ and 'consignee_id'.endswith('_id') else item.consignee_id }}
+        {{ item.consignee.name if item.consignee else '' }}
     </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
-        {{ item.vessel_id_name if 'vessel_id' in item.__dict__ and 'vessel_id'.endswith('_id') else item.vessel_id }}
+        {{ item.vessel.name if item.vessel else '' }}
     </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
-        {{ item.voyage_id_name if 'voyage_id' in item.__dict__ and 'voyage_id'.endswith('_id') else item.voyage_id }}
+        {{ item.voyage.name if item.voyage else '' }}
     </td>
     <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
         <div class="invisible group-hover:visible flex justify-end space-x-2">
