@@ -1,7 +1,7 @@
 {
-    "version": "1.0",
+    "version": "1.1",
     "Models": {
-        "S001_Manifest": {
+        "Manifest": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -17,11 +17,11 @@
                 },
                 "shipper_id": {
                     "type": "Integer",
-                    "foreign_key": "s015_client.id",
+                    "foreign_key": "client.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "shipper",
-                        "target_model": "S015_Client",
+                        "target_model": "Client",
                         "back_populates": "shipper",
                         "foreign_keys": [
                             "shipper_id"
@@ -30,11 +30,11 @@
                 },
                 "consignee_id": {
                     "type": "Integer",
-                    "foreign_key": "s015_client.id",
+                    "foreign_key": "client.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "consignee",
-                        "target_model": "S015_Client",
+                        "target_model": "Client",
                         "back_populates": "consignee",
                         "foreign_keys": [
                             "consignee_id"
@@ -43,11 +43,11 @@
                 },
                 "vessel_id": {
                     "type": "Integer",
-                    "foreign_key": "s009_vessel.id",
+                    "foreign_key": "vessel.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "vessel",
-                        "target_model": "S009_Vessel",
+                        "target_model": "Vessel",
                         "back_populates": "vessel",
                         "foreign_keys": [
                             "vessel_id"
@@ -56,11 +56,11 @@
                 },
                 "voyage_id": {
                     "type": "Integer",
-                    "foreign_key": "s010_voyage.id",
+                    "foreign_key": "voyage.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "voyage",
-                        "target_model": "S010_Voyage",
+                        "target_model": "Voyage",
                         "back_populates": "voyage",
                         "foreign_keys": [
                             "voyage_id"
@@ -69,11 +69,11 @@
                 },
                 "port_of_loading_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port_of_loading",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port_of_loading",
                         "foreign_keys": [
                             "port_of_loading_id"
@@ -82,11 +82,11 @@
                 },
                 "port_of_discharge_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port_of_discharge",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port_of_discharge",
                         "foreign_keys": [
                             "port_of_discharge_id"
@@ -114,11 +114,11 @@
                 },
                 "user_id": {
                     "type": "Integer",
-                    "foreign_key": "s016_user.id",
+                    "foreign_key": "user.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "user",
-                        "target_model": "S016_User",
+                        "target_model": "User",
                         "back_populates": "user",
                         "foreign_keys": [
                             "user_id"
@@ -153,38 +153,38 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S015_Client",
-                        "route": "/view/S015_Client?filter=shipper_id"
+                        "related_table": "Client",
+                        "route": "/view/Client?filter=shipper_id"
                     },
                     {
-                        "related_table": "S015_Client",
-                        "route": "/view/S015_Client?filter=consignee_id"
+                        "related_table": "Client",
+                        "route": "/view/Client?filter=consignee_id"
                     },
                     {
-                        "related_table": "S009_Vessel",
-                        "route": "/view/S009_Vessel?filter=vessel_id"
+                        "related_table": "Vessel",
+                        "route": "/view/Vessel?filter=vessel_id"
                     },
                     {
-                        "related_table": "S010_Voyage",
-                        "route": "/view/S010_Voyage?filter=voyage_id"
+                        "related_table": "Voyage",
+                        "route": "/view/Voyage?filter=voyage_id"
                     },
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=port_of_loading_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=port_of_loading_id"
                     },
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=port_of_discharge_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=port_of_discharge_id"
                     },
                     {
-                        "related_table": "S016_User",
-                        "route": "/view/S016_User?filter=user_id"
+                        "related_table": "User",
+                        "route": "/view/User?filter=user_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S002_LineItem": {
+        "LineItem": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -194,11 +194,11 @@
                 },
                 "manifest_id": {
                     "type": "Integer",
-                    "foreign_key": "s001_manifest.id",
+                    "foreign_key": "manifest.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "manifest",
-                        "target_model": "S001_Manifest",
+                        "target_model": "Manifest",
                         "back_populates": "manifest",
                         "foreign_keys": [
                             "manifest_id"
@@ -227,11 +227,11 @@
                 },
                 "pack_type_id": {
                     "type": "Integer",
-                    "foreign_key": "s004_packtype.id",
+                    "foreign_key": "packtype.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "pack_type",
-                        "target_model": "S004_PackType",
+                        "target_model": "PackType",
                         "back_populates": "pack_type",
                         "foreign_keys": [
                             "pack_type_id"
@@ -240,11 +240,11 @@
                 },
                 "commodity_id": {
                     "type": "Integer",
-                    "foreign_key": "s003_commodity.id",
+                    "foreign_key": "commodity.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "commodity",
-                        "target_model": "S003_Commodity",
+                        "target_model": "Commodity",
                         "back_populates": "commodity",
                         "foreign_keys": [
                             "commodity_id"
@@ -253,11 +253,11 @@
                 },
                 "container_id": {
                     "type": "Integer",
-                    "foreign_key": "s005_container.id",
+                    "foreign_key": "container.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "container",
-                        "target_model": "S005_Container",
+                        "target_model": "Container",
                         "back_populates": "container",
                         "foreign_keys": [
                             "container_id"
@@ -266,11 +266,11 @@
                 },
                 "user_id": {
                     "type": "Integer",
-                    "foreign_key": "s016_user.id",
+                    "foreign_key": "user.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "user",
-                        "target_model": "S016_User",
+                        "target_model": "User",
                         "back_populates": "user",
                         "foreign_keys": [
                             "user_id"
@@ -299,30 +299,30 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S001_Manifest",
-                        "route": "/view/S001_Manifest?filter=manifest_id"
+                        "related_table": "Manifest",
+                        "route": "/view/Manifest?filter=manifest_id"
                     },
                     {
-                        "related_table": "S004_PackType",
-                        "route": "/view/S004_PackType?filter=pack_type_id"
+                        "related_table": "PackType",
+                        "route": "/view/PackType?filter=pack_type_id"
                     },
                     {
-                        "related_table": "S003_Commodity",
-                        "route": "/view/S003_Commodity?filter=commodity_id"
+                        "related_table": "Commodity",
+                        "route": "/view/Commodity?filter=commodity_id"
                     },
                     {
-                        "related_table": "S005_Container",
-                        "route": "/view/S005_Container?filter=container_id"
+                        "related_table": "Container",
+                        "route": "/view/Container?filter=container_id"
                     },
                     {
-                        "related_table": "S016_User",
-                        "route": "/view/S016_User?filter=user_id"
+                        "related_table": "User",
+                        "route": "/view/User?filter=user_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S003_Commodity": {
+        "Commodity": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -349,7 +349,7 @@
                 "Statistics": []
             }
         },
-        "S004_PackType": {
+        "PackType": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -376,7 +376,7 @@
                 "Statistics": []
             }
         },
-        "S005_Container": {
+        "Container": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -392,11 +392,11 @@
                 },
                 "port_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port",
                         "foreign_keys": [
                             "port_id"
@@ -417,14 +417,14 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=port_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=port_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S006_ContainerHistory": {
+        "ContainerHistory": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -434,11 +434,11 @@
                 },
                 "container_id": {
                     "type": "Integer",
-                    "foreign_key": "s005_container.id",
+                    "foreign_key": "container.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "container",
-                        "target_model": "S005_Container",
+                        "target_model": "Container",
                         "back_populates": "container",
                         "foreign_keys": [
                             "container_id"
@@ -447,11 +447,11 @@
                 },
                 "port_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port",
                         "foreign_keys": [
                             "port_id"
@@ -460,11 +460,11 @@
                 },
                 "client_id": {
                     "type": "Integer",
-                    "foreign_key": "s015_client.id",
+                    "foreign_key": "client.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "client",
-                        "target_model": "S015_Client",
+                        "target_model": "Client",
                         "back_populates": "client",
                         "foreign_keys": [
                             "client_id"
@@ -473,11 +473,11 @@
                 },
                 "container_status_id": {
                     "type": "Integer",
-                    "foreign_key": "s007_containerstatus.id",
+                    "foreign_key": "containerstatus.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "container_status",
-                        "target_model": "S007_ContainerStatus",
+                        "target_model": "ContainerStatus",
                         "back_populates": "container_status",
                         "foreign_keys": [
                             "container_status_id"
@@ -512,26 +512,26 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S005_Container",
-                        "route": "/view/S005_Container?filter=container_id"
+                        "related_table": "Container",
+                        "route": "/view/Container?filter=container_id"
                     },
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=port_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=port_id"
                     },
                     {
-                        "related_table": "S015_Client",
-                        "route": "/view/S015_Client?filter=client_id"
+                        "related_table": "Client",
+                        "route": "/view/Client?filter=client_id"
                     },
                     {
-                        "related_table": "S007_ContainerStatus",
-                        "route": "/view/S007_ContainerStatus?filter=container_status_id"
+                        "related_table": "ContainerStatus",
+                        "route": "/view/ContainerStatus?filter=container_status_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S007_ContainerStatus": {
+        "ContainerStatus": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -557,7 +557,7 @@
                 "Statistics": []
             }
         },
-        "S008_ShippingCompany": {
+        "ShippingCompany": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -579,7 +579,7 @@
                 "Statistics": []
             }
         },
-        "S009_Vessel": {
+        "Vessel": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -594,11 +594,11 @@
                 },
                 "shipping_company_id": {
                     "type": "Integer",
-                    "foreign_key": "s008_shippingcompany.id",
+                    "foreign_key": "shippingcompany.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "shipping_company",
-                        "target_model": "S008_ShippingCompany",
+                        "target_model": "ShippingCompany",
                         "back_populates": "shipping_company",
                         "foreign_keys": [
                             "shipping_company_id"
@@ -615,14 +615,14 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S008_ShippingCompany",
-                        "route": "/view/S008_ShippingCompany?filter=shipping_company_id"
+                        "related_table": "ShippingCompany",
+                        "route": "/view/ShippingCompany?filter=shipping_company_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S010_Voyage": {
+        "Voyage": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -638,11 +638,11 @@
                 },
                 "vessel_id": {
                     "type": "Integer",
-                    "foreign_key": "s009_vessel.id",
+                    "foreign_key": "vessel.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "vessel",
-                        "target_model": "S009_Vessel",
+                        "target_model": "Vessel",
                         "back_populates": "vessel",
                         "foreign_keys": [
                             "vessel_id"
@@ -664,14 +664,14 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S009_Vessel",
-                        "route": "/view/S009_Vessel?filter=vessel_id"
+                        "related_table": "Vessel",
+                        "route": "/view/Vessel?filter=vessel_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S011_Leg": {
+        "Leg": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -681,11 +681,11 @@
                 },
                 "voyage_id": {
                     "type": "Integer",
-                    "foreign_key": "s010_voyage.id",
+                    "foreign_key": "voyage.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "voyage",
-                        "target_model": "S010_Voyage",
+                        "target_model": "Voyage",
                         "back_populates": "voyage",
                         "foreign_keys": [
                             "voyage_id"
@@ -694,11 +694,11 @@
                 },
                 "port_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port",
                         "foreign_keys": [
                             "port_id"
@@ -731,18 +731,18 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S010_Voyage",
-                        "route": "/view/S010_Voyage?filter=voyage_id"
+                        "related_table": "Voyage",
+                        "route": "/view/Voyage?filter=voyage_id"
                     },
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=port_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=port_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S012_Port": {
+        "Port": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -758,11 +758,11 @@
                 },
                 "country_id": {
                     "type": "Integer",
-                    "foreign_key": "s014_country.id",
+                    "foreign_key": "country.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "country",
-                        "target_model": "S014_Country",
+                        "target_model": "Country",
                         "back_populates": "country",
                         "foreign_keys": [
                             "country_id"
@@ -784,14 +784,14 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S014_Country",
-                        "route": "/view/S014_Country?filter=country_id"
+                        "related_table": "Country",
+                        "route": "/view/Country?filter=country_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S013_PortPair": {
+        "PortPair": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -801,11 +801,11 @@
                 },
                 "pol_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port_of_loading",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port_pairs_as_loading",
                         "foreign_keys": [
                             "pol_id"
@@ -814,11 +814,11 @@
                 },
                 "pod_id": {
                     "type": "Integer",
-                    "foreign_key": "s012_port.id",
+                    "foreign_key": "port.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "port_of_discharge",
-                        "target_model": "S012_Port",
+                        "target_model": "Port",
                         "back_populates": "port_pairs_as_discharge",
                         "foreign_keys": [
                             "pod_id"
@@ -848,18 +848,18 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=pol_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=pol_id"
                     },
                     {
-                        "related_table": "S012_Port",
-                        "route": "/view/S012_Port?filter=pod_id"
+                        "related_table": "Port",
+                        "route": "/view/Port?filter=pod_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S014_Country": {
+        "Country": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -881,7 +881,7 @@
                 "Statistics": []
             }
         },
-        "S015_Client": {
+        "Client": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -907,11 +907,11 @@
                 },
                 "country_id": {
                     "type": "Integer",
-                    "foreign_key": "s014_country.id",
+                    "foreign_key": "country.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "country",
-                        "target_model": "S014_Country",
+                        "target_model": "Country",
                         "back_populates": "country",
                         "foreign_keys": [
                             "country_id"
@@ -943,14 +943,14 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S014_Country",
-                        "route": "/view/S014_Country?filter=country_id"
+                        "related_table": "Country",
+                        "route": "/view/Country?filter=country_id"
                     }
                 ],
                 "Statistics": []
             }
         },
-        "S016_User": {
+        "User": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -982,7 +982,7 @@
                 "Statistics": []
             }
         },
-        "S017_Rate": {
+        "Rate": {
             "Fields": {
                 "id": {
                     "type": "Integer",
@@ -997,11 +997,11 @@
                 },
                 "commodity_id": {
                     "type": "Integer",
-                    "foreign_key": "s003_commodity.id",
+                    "foreign_key": "commodity.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "commodity",
-                        "target_model": "S003_Commodity",
+                        "target_model": "Commodity",
                         "back_populates": "commodity",
                         "foreign_keys": [
                             "commodity_id"
@@ -1010,11 +1010,11 @@
                 },
                 "pack_type_id": {
                     "type": "Integer",
-                    "foreign_key": "s004_packtype.id",
+                    "foreign_key": "packtype.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "pack_type",
-                        "target_model": "S004_PackType",
+                        "target_model": "PackType",
                         "back_populates": "pack_type",
                         "foreign_keys": [
                             "pack_type_id"
@@ -1023,11 +1023,11 @@
                 },
                 "client_id": {
                     "type": "Integer",
-                    "foreign_key": "s015_client.id",
+                    "foreign_key": "client.id",
                     "nullable": true,
                     "relationship": {
                         "field_name": "client",
-                        "target_model": "S015_Client",
+                        "target_model": "Client",
                         "back_populates": "client",
                         "foreign_keys": [
                             "client_id"
@@ -1059,16 +1059,16 @@
             "Menus": {
                 "Context": [
                     {
-                        "related_table": "S003_Commodity",
-                        "route": "/view/S003_Commodity?filter=commodity_id"
+                        "related_table": "Commodity",
+                        "route": "/view/Commodity?filter=commodity_id"
                     },
                     {
-                        "related_table": "S004_PackType",
-                        "route": "/view/S004_PackType?filter=pack_type_id"
+                        "related_table": "PackType",
+                        "route": "/view/PackType?filter=pack_type_id"
                     },
                     {
-                        "related_table": "S015_Client",
-                        "route": "/view/S015_Client?filter=client_id"
+                        "related_table": "Client",
+                        "route": "/view/Client?filter=client_id"
                     }
                 ],
                 "Statistics": []

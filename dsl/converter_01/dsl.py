@@ -80,20 +80,24 @@ def parse_relationship(field_type, attrs, field_name, model_map):
 def first_pass_create_model_map(file_path):
     """First pass: Create a mapping of table names to prefixed names."""
     model_map = {}
+    number_prefix = False # Use numeric prefix for model names
     model_counter = 1
     with open(file_path, "r") as file:
         for line in file:
             line = line.strip()
             if line.startswith("table"):
                 table_name = line.split()[1]
-                model_map[table_name] = f"S{model_counter:03}_{table_name}"
-                model_counter += 1
+                if number_prefix:
+                    model_map[table_name] = f"S{model_counter:03}_{table_name}"
+                    model_counter += 1
+                else:
+                    model_map[table_name] = f"{table_name}"          
     return model_map
 
 def second_pass_generate_models(file_path, model_map):
     """Second pass: Process fields, relationships, and indices."""
     result = {
-        "version": "1.0",
+        "version": "1.1",
         "Models": {},
         "Menus": {"Main": [], "Context": {}, "Statistics": {}}
     }

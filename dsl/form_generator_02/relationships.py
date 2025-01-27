@@ -8,6 +8,9 @@ def generate_relationship_helpers(json_file: str | Path, output_dir: str | Path)
     Args:
         json_file: Path to the JSON schema file
         output_dir: Directory where helper files will be generated
+
+    NOTE: LOOKS LIKE THIS FUNCTION IS NOT USED IN THE FINAL IMPLEMENTATION. IF SO, DELETE IT.
+
     """
     json_path = Path(json_file)
     output_path = Path(output_dir)

@@ -1,405 +1,573 @@
 {
-  "S001_Manifest": {
+  "Manifest": {
     "relationships": {
       "shipper": {
         "type": "foreign_key",
-        "foreign_table": "S015_Client",
+        "foreign_table": "Client",
         "foreign_key": "shipper_id",
-        "back_populates": "manifest_as_shippers"
+        "back_populates": "manifest_as_shippers",
+        "foreign_keys": [
+          "shipper_id"
+        ]
       },
       "consignee": {
         "type": "foreign_key",
-        "foreign_table": "S015_Client",
+        "foreign_table": "Client",
         "foreign_key": "consignee_id",
-        "back_populates": "manifest_as_consignees"
+        "back_populates": "manifest_as_consignees",
+        "foreign_keys": [
+          "consignee_id"
+        ]
       },
       "vessel": {
         "type": "foreign_key",
-        "foreign_table": "S009_Vessel",
+        "foreign_table": "Vessel",
         "foreign_key": "vessel_id",
-        "back_populates": "manifests"
+        "back_populates": "manifests",
+        "foreign_keys": [
+          "vessel_id"
+        ]
       },
       "voyage": {
         "type": "foreign_key",
-        "foreign_table": "S010_Voyage",
+        "foreign_table": "Voyage",
         "foreign_key": "voyage_id",
-        "back_populates": "manifests"
+        "back_populates": "manifests",
+        "foreign_keys": [
+          "voyage_id"
+        ]
       },
       "port_of_loading": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "port_of_loading_id",
-        "back_populates": "manifest_as_port_of_loadings"
+        "back_populates": "manifest_as_port_of_loadings",
+        "foreign_keys": [
+          "port_of_loading_id"
+        ]
       },
       "port_of_discharge": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "port_of_discharge_id",
-        "back_populates": "manifest_as_port_of_discharges"
+        "back_populates": "manifest_as_port_of_discharges",
+        "foreign_keys": [
+          "port_of_discharge_id"
+        ]
       },
       "user": {
         "type": "foreign_key",
-        "foreign_table": "S016_User",
+        "foreign_table": "User",
         "foreign_key": "user_id",
-        "back_populates": "manifests"
+        "back_populates": "manifests",
+        "foreign_keys": [
+          "user_id"
+        ]
       },
       "line_items": {
         "type": "one_to_many",
-        "foreign_table": "S002_LineItem",
+        "foreign_table": "LineItem",
         "foreign_key": "manifest_id",
-        "back_populates": "manifest"
+        "back_populates": "manifest",
+        "foreign_keys": [
+          "manifest_id"
+        ]
       }
     }
   },
-  "S002_LineItem": {
+  "LineItem": {
     "relationships": {
       "manifest": {
         "type": "foreign_key",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "manifest_id",
-        "back_populates": "line_items"
+        "back_populates": "line_items",
+        "foreign_keys": [
+          "manifest_id"
+        ]
       },
       "pack_type": {
         "type": "foreign_key",
-        "foreign_table": "S004_PackType",
+        "foreign_table": "PackType",
         "foreign_key": "pack_type_id",
-        "back_populates": "line_items"
+        "back_populates": "line_items",
+        "foreign_keys": [
+          "pack_type_id"
+        ]
       },
       "commodity": {
         "type": "foreign_key",
-        "foreign_table": "S003_Commodity",
+        "foreign_table": "Commodity",
         "foreign_key": "commodity_id",
-        "back_populates": "line_items"
+        "back_populates": "line_items",
+        "foreign_keys": [
+          "commodity_id"
+        ]
       },
       "container": {
         "type": "foreign_key",
-        "foreign_table": "S005_Container",
+        "foreign_table": "Container",
         "foreign_key": "container_id",
-        "back_populates": "line_items"
+        "back_populates": "line_items",
+        "foreign_keys": [
+          "container_id"
+        ]
       },
       "user": {
         "type": "foreign_key",
-        "foreign_table": "S016_User",
+        "foreign_table": "User",
         "foreign_key": "user_id",
-        "back_populates": "line_items"
+        "back_populates": "line_items",
+        "foreign_keys": [
+          "user_id"
+        ]
       }
     }
   },
-  "S003_Commodity": {
+  "Commodity": {
     "relationships": {
       "line_items": {
         "type": "one_to_many",
-        "foreign_table": "S002_LineItem",
+        "foreign_table": "LineItem",
         "foreign_key": "commodity_id",
-        "back_populates": "commodity"
+        "back_populates": "commodity",
+        "foreign_keys": [
+          "commodity_id"
+        ]
       },
       "rates": {
         "type": "one_to_many",
-        "foreign_table": "S017_Rate",
+        "foreign_table": "Rate",
         "foreign_key": "commodity_id",
-        "back_populates": "commodity"
+        "back_populates": "commodity",
+        "foreign_keys": [
+          "commodity_id"
+        ]
       }
     }
   },
-  "S004_PackType": {
+  "PackType": {
     "relationships": {
       "line_items": {
         "type": "one_to_many",
-        "foreign_table": "S002_LineItem",
+        "foreign_table": "LineItem",
         "foreign_key": "pack_type_id",
-        "back_populates": "pack_type"
+        "back_populates": "pack_type",
+        "foreign_keys": [
+          "pack_type_id"
+        ]
       },
       "rates": {
         "type": "one_to_many",
-        "foreign_table": "S017_Rate",
+        "foreign_table": "Rate",
         "foreign_key": "pack_type_id",
-        "back_populates": "pack_type"
+        "back_populates": "pack_type",
+        "foreign_keys": [
+          "pack_type_id"
+        ]
       }
     }
   },
-  "S005_Container": {
+  "Container": {
     "relationships": {
       "line_items": {
         "type": "one_to_many",
-        "foreign_table": "S002_LineItem",
+        "foreign_table": "LineItem",
         "foreign_key": "container_id",
-        "back_populates": "container"
+        "back_populates": "container",
+        "foreign_keys": [
+          "container_id"
+        ]
       },
       "port": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "port_id",
-        "back_populates": "containers"
+        "back_populates": "containers",
+        "foreign_keys": [
+          "port_id"
+        ]
       },
       "container_histories": {
         "type": "one_to_many",
-        "foreign_table": "S006_ContainerHistory",
+        "foreign_table": "ContainerHistory",
         "foreign_key": "container_id",
-        "back_populates": "container"
+        "back_populates": "container",
+        "foreign_keys": [
+          "container_id"
+        ]
       }
     }
   },
-  "S006_ContainerHistory": {
+  "ContainerHistory": {
     "relationships": {
       "container": {
         "type": "foreign_key",
-        "foreign_table": "S005_Container",
+        "foreign_table": "Container",
         "foreign_key": "container_id",
-        "back_populates": "container_histories"
+        "back_populates": "container_histories",
+        "foreign_keys": [
+          "container_id"
+        ]
       },
       "port": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "port_id",
-        "back_populates": "container_histories"
+        "back_populates": "container_histories",
+        "foreign_keys": [
+          "port_id"
+        ]
       },
       "client": {
         "type": "foreign_key",
-        "foreign_table": "S015_Client",
+        "foreign_table": "Client",
         "foreign_key": "client_id",
-        "back_populates": "container_histories"
+        "back_populates": "container_histories",
+        "foreign_keys": [
+          "client_id"
+        ]
       },
       "container_status": {
         "type": "foreign_key",
-        "foreign_table": "S007_ContainerStatus",
+        "foreign_table": "ContainerStatus",
         "foreign_key": "container_status_id",
-        "back_populates": "container_histories"
+        "back_populates": "container_histories",
+        "foreign_keys": [
+          "container_status_id"
+        ]
       }
     }
   },
-  "S007_ContainerStatus": {
+  "ContainerStatus": {
     "relationships": {
       "container_histories": {
         "type": "one_to_many",
-        "foreign_table": "S006_ContainerHistory",
+        "foreign_table": "ContainerHistory",
         "foreign_key": "container_status_id",
-        "back_populates": "container_status"
+        "back_populates": "container_status",
+        "foreign_keys": [
+          "container_status_id"
+        ]
       }
     }
   },
-  "S008_ShippingCompany": {
+  "ShippingCompany": {
     "relationships": {
       "vessels": {
         "type": "one_to_many",
-        "foreign_table": "S009_Vessel",
+        "foreign_table": "Vessel",
         "foreign_key": "shipping_company_id",
-        "back_populates": "shipping_company"
+        "back_populates": "shipping_company",
+        "foreign_keys": [
+          "shipping_company_id"
+        ]
       }
     }
   },
-  "S009_Vessel": {
+  "Vessel": {
     "relationships": {
       "manifests": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "vessel_id",
-        "back_populates": "vessel"
+        "back_populates": "vessel",
+        "foreign_keys": [
+          "vessel_id"
+        ]
       },
       "shipping_company": {
         "type": "foreign_key",
-        "foreign_table": "S008_ShippingCompany",
+        "foreign_table": "ShippingCompany",
         "foreign_key": "shipping_company_id",
-        "back_populates": "vessels"
+        "back_populates": "vessels",
+        "foreign_keys": [
+          "shipping_company_id"
+        ]
       },
       "voyages": {
         "type": "one_to_many",
-        "foreign_table": "S010_Voyage",
+        "foreign_table": "Voyage",
         "foreign_key": "vessel_id",
-        "back_populates": "vessel"
+        "back_populates": "vessel",
+        "foreign_keys": [
+          "vessel_id"
+        ]
       }
     }
   },
-  "S010_Voyage": {
+  "Voyage": {
     "relationships": {
       "manifests": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "voyage_id",
-        "back_populates": "voyage"
+        "back_populates": "voyage",
+        "foreign_keys": [
+          "voyage_id"
+        ]
       },
       "vessel": {
         "type": "foreign_key",
-        "foreign_table": "S009_Vessel",
+        "foreign_table": "Vessel",
         "foreign_key": "vessel_id",
-        "back_populates": "voyages"
+        "back_populates": "voyages",
+        "foreign_keys": [
+          "vessel_id"
+        ]
       },
       "legs": {
         "type": "one_to_many",
-        "foreign_table": "S011_Leg",
+        "foreign_table": "Leg",
         "foreign_key": "voyage_id",
-        "back_populates": "voyage"
+        "back_populates": "voyage",
+        "foreign_keys": [
+          "voyage_id"
+        ]
       }
     }
   },
-  "S011_Leg": {
+  "Leg": {
     "relationships": {
       "voyage": {
         "type": "foreign_key",
-        "foreign_table": "S010_Voyage",
+        "foreign_table": "Voyage",
         "foreign_key": "voyage_id",
-        "back_populates": "legs"
+        "back_populates": "legs",
+        "foreign_keys": [
+          "voyage_id"
+        ]
       },
       "port": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "port_id",
-        "back_populates": "legs"
+        "back_populates": "legs",
+        "foreign_keys": [
+          "port_id"
+        ]
       }
     }
   },
-  "S012_Port": {
+  "Port": {
     "relationships": {
       "manifest_as_port_of_loadings": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "port_of_loading_id",
-        "back_populates": "port_of_loading"
+        "back_populates": "port_of_loading",
+        "foreign_keys": [
+          "port_of_loading_id"
+        ]
       },
       "manifest_as_port_of_discharges": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "port_of_discharge_id",
-        "back_populates": "port_of_discharge"
+        "back_populates": "port_of_discharge",
+        "foreign_keys": [
+          "port_of_discharge_id"
+        ]
       },
       "containers": {
         "type": "one_to_many",
-        "foreign_table": "S005_Container",
+        "foreign_table": "Container",
         "foreign_key": "port_id",
-        "back_populates": "port"
+        "back_populates": "port",
+        "foreign_keys": [
+          "port_id"
+        ]
       },
       "container_histories": {
         "type": "one_to_many",
-        "foreign_table": "S006_ContainerHistory",
+        "foreign_table": "ContainerHistory",
         "foreign_key": "port_id",
-        "back_populates": "port"
+        "back_populates": "port",
+        "foreign_keys": [
+          "port_id"
+        ]
       },
       "legs": {
         "type": "one_to_many",
-        "foreign_table": "S011_Leg",
+        "foreign_table": "Leg",
         "foreign_key": "port_id",
-        "back_populates": "port"
+        "back_populates": "port",
+        "foreign_keys": [
+          "port_id"
+        ]
       },
       "country": {
         "type": "foreign_key",
-        "foreign_table": "S014_Country",
+        "foreign_table": "Country",
         "foreign_key": "country_id",
-        "back_populates": "ports"
+        "back_populates": "ports",
+        "foreign_keys": [
+          "country_id"
+        ]
       },
       "port_pair_as_pols": {
         "type": "one_to_many",
-        "foreign_table": "S013_PortPair",
+        "foreign_table": "PortPair",
         "foreign_key": "pol_id",
-        "back_populates": "pol"
+        "back_populates": "pol",
+        "foreign_keys": [
+          "pol_id"
+        ]
       },
       "port_pair_as_pods": {
         "type": "one_to_many",
-        "foreign_table": "S013_PortPair",
+        "foreign_table": "PortPair",
         "foreign_key": "pod_id",
-        "back_populates": "pod"
+        "back_populates": "pod",
+        "foreign_keys": [
+          "pod_id"
+        ]
       }
     }
   },
-  "S013_PortPair": {
+  "PortPair": {
     "relationships": {
       "pol": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "pol_id",
-        "back_populates": "port_pair_as_pols"
+        "back_populates": "port_pair_as_pols",
+        "foreign_keys": [
+          "pol_id"
+        ]
       },
       "pod": {
         "type": "foreign_key",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "pod_id",
-        "back_populates": "port_pair_as_pods"
+        "back_populates": "port_pair_as_pods",
+        "foreign_keys": [
+          "pod_id"
+        ]
       }
     }
   },
-  "S014_Country": {
+  "Country": {
     "relationships": {
       "ports": {
         "type": "one_to_many",
-        "foreign_table": "S012_Port",
+        "foreign_table": "Port",
         "foreign_key": "country_id",
-        "back_populates": "country"
+        "back_populates": "country",
+        "foreign_keys": [
+          "country_id"
+        ]
       },
       "clients": {
         "type": "one_to_many",
-        "foreign_table": "S015_Client",
+        "foreign_table": "Client",
         "foreign_key": "country_id",
-        "back_populates": "country"
+        "back_populates": "country",
+        "foreign_keys": [
+          "country_id"
+        ]
       }
     }
   },
-  "S015_Client": {
+  "Client": {
     "relationships": {
       "manifest_as_shippers": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "shipper_id",
-        "back_populates": "shipper"
+        "back_populates": "shipper",
+        "foreign_keys": [
+          "shipper_id"
+        ]
       },
       "manifest_as_consignees": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "consignee_id",
-        "back_populates": "consignee"
+        "back_populates": "consignee",
+        "foreign_keys": [
+          "consignee_id"
+        ]
       },
       "container_histories": {
         "type": "one_to_many",
-        "foreign_table": "S006_ContainerHistory",
+        "foreign_table": "ContainerHistory",
         "foreign_key": "client_id",
-        "back_populates": "client"
+        "back_populates": "client",
+        "foreign_keys": [
+          "client_id"
+        ]
       },
       "country": {
         "type": "foreign_key",
-        "foreign_table": "S014_Country",
+        "foreign_table": "Country",
         "foreign_key": "country_id",
-        "back_populates": "clients"
+        "back_populates": "clients",
+        "foreign_keys": [
+          "country_id"
+        ]
       },
       "rates": {
         "type": "one_to_many",
-        "foreign_table": "S017_Rate",
+        "foreign_table": "Rate",
         "foreign_key": "client_id",
-        "back_populates": "client"
+        "back_populates": "client",
+        "foreign_keys": [
+          "client_id"
+        ]
       }
     }
   },
-  "S016_User": {
+  "User": {
     "relationships": {
       "manifests": {
         "type": "one_to_many",
-        "foreign_table": "S001_Manifest",
+        "foreign_table": "Manifest",
         "foreign_key": "user_id",
-        "back_populates": "user"
+        "back_populates": "user",
+        "foreign_keys": [
+          "user_id"
+        ]
       },
       "line_items": {
         "type": "one_to_many",
-        "foreign_table": "S002_LineItem",
+        "foreign_table": "LineItem",
         "foreign_key": "user_id",
-        "back_populates": "user"
+        "back_populates": "user",
+        "foreign_keys": [
+          "user_id"
+        ]
       }
     }
   },
-  "S017_Rate": {
+  "Rate": {
     "relationships": {
       "commodity": {
         "type": "foreign_key",
-        "foreign_table": "S003_Commodity",
+        "foreign_table": "Commodity",
         "foreign_key": "commodity_id",
-        "back_populates": "rates"
+        "back_populates": "rates",
+        "foreign_keys": [
+          "commodity_id"
+        ]
       },
       "pack_type": {
         "type": "foreign_key",
-        "foreign_table": "S004_PackType",
+        "foreign_table": "PackType",
         "foreign_key": "pack_type_id",
-        "back_populates": "rates"
+        "back_populates": "rates",
+        "foreign_keys": [
+          "pack_type_id"
+        ]
       },
       "client": {
         "type": "foreign_key",
-        "foreign_table": "S015_Client",
+        "foreign_table": "Client",
         "foreign_key": "client_id",
-        "back_populates": "rates"
+        "back_populates": "rates",
+        "foreign_keys": [
+          "client_id"
+        ]
       }
     }
   }
