@@ -9,7 +9,7 @@ from pathlib import Path
 project_root = str(Path(__file__).parent.parent.parent)
 sys.path.append(project_root)
 
-from dsl.converter_01.validation import validate_dsl
+from dsl.convert_batch import validate_dsl_file
 
 def main():
     base_dir = Path(__file__).parent.parent
@@ -20,7 +20,7 @@ def main():
         sys.exit(1)
     
     print(f"Validating schema file: {schema_file}")
-    is_valid, errors = validate_dsl(schema_file)
+    is_valid, errors = validate_dsl_file(schema_file)
     
     if is_valid:
         print("✓ Schema validation passed")

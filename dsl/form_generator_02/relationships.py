@@ -9,8 +9,6 @@ def generate_relationship_helpers(json_file: str | Path, output_dir: str | Path)
         json_file: Path to the JSON schema file
         output_dir: Directory where helper files will be generated
 
-    NOTE: LOOKS LIKE THIS FUNCTION IS NOT USED IN THE FINAL IMPLEMENTATION. IF SO, DELETE IT.
-
     """
     json_path = Path(json_file)
     output_path = Path(output_dir)
@@ -19,7 +17,10 @@ def generate_relationship_helpers(json_file: str | Path, output_dir: str | Path)
     with open(json_path, "r") as f:
         data = json.load(f)
     
-    # Generate helpers for complex models
+    # Generate helpers for complex models. 
+    # Complex models are only those with relationships, and they should be tested for in the code. 
+    # There is a blank/ unused 'Relationships' list in 'shipping.json' that could be used?.
+
     complex_models = {
         'S001_Manifest': {
             'relationships': [

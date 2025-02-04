@@ -1,6 +1,21 @@
+"""
+DEPRECATED: This module is superseded by convert_batch.py
+This module is currently only used by the validation system.
+TODO: Move validation functionality to convert_batch.py and remove this module.
+
+The functionality in this module has been improved and moved to:
+1. convert_batch.py - Main conversion logic
+2. relationship_analyzer.py - Relationship handling
+3. convert_batch.py's extract_relationship_metadata() - Metadata generation
+"""
+
 import json
 import re
+import sys
 from collections import defaultdict
+
+print("Warning: Using deprecated dsl.py module. Use convert_batch.py instead.",
+      file=sys.stderr)
 
 DEFAULT_PARAMS = {
     "nullable": True,
@@ -63,17 +78,14 @@ def parse_foreign_key(ref_part, model_map):
 def parse_relationship(field_type, attrs, field_name, model_map):
     """Parse relationship definitions."""
     rel_match = re.search(r'relationship: "([^"]+)"', attrs)
-    back_pop_match = re.search(r'back_populates: "([^"]+)"', attrs)
     
-    if rel_match and back_pop_match:
+    if rel_match:
         target_model = field_type.replace("[]", "")
         prefixed_target = model_map.get(target_model, target_model)
         return {
             "type": rel_match.group(1),
-            "back_populates": back_pop_match.group(1),
             "target_model": prefixed_target,
-            "field_name": field_name,
-            "relationship_name": back_pop_match.group(1)
+            "field_name": field_name
         }
     return None
 
@@ -191,16 +203,8 @@ def second_pass_generate_models(file_path, model_map):
                         field_def["foreign_key"] = f"{target_model}.{target_field}".lower()
                         field_def["nullable"] = True
                         
-                        # Find matching relationship for back_populates
+                        # Handle relationships
                         rel_name = field_name.replace("_id", "")
-                        back_populates = None
-                        
-                        # Look for matching relationship in target model
-                        for rel in relationships.get(target_model, []):
-                            # Check if this relationship targets our current model
-                            if rel["target_model"] == model_map.get(current_model_name):
-                                back_populates = rel["back_populates"]
-                                break
                         
                         # Special handling for PortPair relationships
                         if current_model_name == "PortPair":
@@ -208,29 +212,18 @@ def second_pass_generate_models(file_path, model_map):
                                 field_def["relationship"] = {
                                     "field_name": "port_of_loading",
                                     "target_model": target_model,
-                                    "back_populates": "port_pairs_as_loading",
                                     "foreign_keys": [field_name]
                                 }
                             elif field_name == "pod_id":
                                 field_def["relationship"] = {
                                     "field_name": "port_of_discharge",
                                     "target_model": target_model,
-                                    "back_populates": "port_pairs_as_discharge",
                                     "foreign_keys": [field_name]
                                 }
                         else:
-                            # Find the matching relationship in the target model
-                            target_rel = None
-                            for rel in relationships.get(target_model, []):
-                                if rel["target_model"] == model_map.get(current_model_name):
-                                    target_rel = rel
-                                    break
-                            
-                            # Use the relationship_name from the target model's relationship
                             field_def["relationship"] = {
                                 "field_name": rel_name,
                                 "target_model": target_model,
-                                "back_populates": target_rel["relationship_name"] if target_rel else rel_name,
                                 "foreign_keys": [field_name]
                             }
 

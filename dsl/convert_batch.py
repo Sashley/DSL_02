@@ -8,6 +8,7 @@ import sys
 import json
 import re
 from pathlib import Path
+from typing import Dict, List, Tuple
 from collections import defaultdict
 from relationship_analyzer import extract_relationship_metadata
 
@@ -16,9 +17,7 @@ current_dir = Path(__file__).parent
 project_root = current_dir.parent
 sys.path.insert(0, str(project_root))
 
-from dsl.converter_01.dsl_convert.validate_dsl import validate_dsl
 from dsl.converter_01.dsl_convert.convert_dsl import convert_dsl_to_json
-from dsl.converter_01.sqlalchemy import load_json_to_models
 
 def get_config():
     """
@@ -100,30 +99,98 @@ def get_constraint_str(constraint_name, config):
     """
     return config['column_constraints'].get(constraint_name, '')
 
-def validate_dsl_file(file_path):
+def validate_dsl_syntax(content: str) -> List[str]:
     """
-    Validate DSL file and exit if validation fails.
+    Validate basic DSL syntax.
+    Returns a list of error messages, empty if valid.
+    """
+    errors = []
+    
+    # Check if file starts with table definitions
+    if not content.strip().startswith('table '):
+        errors.append("DSL file must start with table definitions")
+    
+    # Check for balanced braces
+    if content.count('{') != content.count('}'):
+        errors.append("Unbalanced braces in DSL file")
+        
+    return errors
+
+def validate_sqlalchemy_schema(json_data: Dict) -> List[str]:
+    """
+    Validate SQLAlchemy specific rules.
+    Returns a list of error messages, empty if valid.
+    """
+    errors = []
+    
+    for model_name, model_data in json_data['Models'].items():
+        # Check primary key exists
+        has_primary_key = any(
+            field_info.get('primary_key', False)
+            for field_info in model_data['Fields'].values()
+        )
+        if not has_primary_key:
+            errors.append(f"Model {model_name} must have a primary key")
+        
+        # Check foreign key references
+        for field_name, field_info in model_data['Fields'].items():
+            if 'foreign_key' in field_info:
+                target = field_info['foreign_key'].split('.')[0]
+                if target not in json_data['Models']:
+                    errors.append(
+                        f"Invalid foreign key in {model_name}.{field_name}: "
+                        f"Target model {target} not found"
+                    )
+    
+    return errors
+
+def validate_dsl_file(file_path: str | Path) -> Tuple[bool, List[str]]:
+    """
+    Validate DSL file through multiple validation steps:
+    1. Basic DSL syntax validation
+    2. SQLAlchemy schema validation
+    
+    Returns:
+        Tuple[bool, List[str]]: (is_valid, list_of_errors)
     """
     try:
         with open(file_path, "r") as f:
             dsl_content = f.read()
         
-        # Basic validation - check if it's a valid DSL file
-        if not dsl_content.strip().startswith('table '):
-            print("DSL validation failed: DSL file must start with table definitions")
-            sys.exit(1)
-        
-        # Check for balanced braces
-        if dsl_content.count('{') != dsl_content.count('}'):
-            print("DSL validation failed: Unbalanced braces in DSL file")
-            sys.exit(1)
-        
+        # Step 1: Validate DSL syntax
+        syntax_errors = validate_dsl_syntax(dsl_content)
+        if syntax_errors:
+            return False, syntax_errors
+            
+        # Step 2: Convert to JSON and validate SQLAlchemy schema
+        try:
+            # Create a temporary file for the DSL content
+            temp_file = Path(file_path).parent / "_temp_dsl.dsl"
+            temp_json = Path(file_path).parent / "_temp_dsl.json"
+            
+            with open(temp_file, "w") as f:
+                f.write(dsl_content)
+                
+            json_data = convert_dsl_to_json(str(temp_file), str(temp_json))
+            sqlalchemy_errors = validate_sqlalchemy_schema(json_data)
+            
+            # Cleanup temporary files
+            if temp_file.exists():
+                temp_file.unlink()
+            if temp_json.exists():
+                temp_json.unlink()
+                
+            if sqlalchemy_errors:
+                return False, sqlalchemy_errors
+                
+        except Exception as e:
+            return False, [f"Schema validation failed: {str(e)}"]
+            
         print("DSL validation passed successfully!")
-        return True
+        return True, []
 
     except Exception as e:
-        print(f"DSL validation failed: {e}")
-        sys.exit(1)
+        return False, [f"Validation failed: {str(e)}"]
 
 def clean_model_name(name):
     """

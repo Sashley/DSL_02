@@ -2,19 +2,20 @@ import os
 import sys
 import random
 from datetime import datetime, timedelta
+import logging
 
 # Add the project root directory to Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_root)
 
-from app import create_app, db
-
-app = create_app()
+from flask import Flask
+from app.models.shipping import db
 from app.models.shipping import (
-    S001_Manifest, S002_LineItem, S003_Commodity, S004_PackType, 
-    S005_Container, S006_ContainerHistory, S007_ContainerStatus, 
-    S008_ShippingCompany, S009_Vessel, S010_Voyage, S011_Leg, 
-    S012_Port, S013_PortPair, S014_Country, S015_Client, S016_User, 
-    S017_Rate
+    Manifest, LineItem, Commodity, PackType,
+    Container, ContainerHistory, ContainerStatus,
+    ShippingCompany, Vessel, Voyage, Leg,
+    Port, PortPair, Country, Client, User,
+    Rate
 )
 
 def generate_container_number(owner_code, equipment_type, serial_number):
@@ -61,29 +62,113 @@ def generate_bill_of_lading(voyage, pol, pod, sequence_counters):
     # Format the bill of lading number
     return f"{combo_key}-{sequence_counters[combo_key]:05d}"
 
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Initialize Flask app with minimal configuration
+app = Flask(__name__)
+app.config.from_object('config.DevelopmentConfig')
+
+# Debug configuration
+logger.debug("Project root: %s", project_root)
+logger.debug("SQLAlchemy Database URI: %s", app.config['SQLALCHEMY_DATABASE_URI'])
+logger.debug("Debug mode: %s", app.config['DEBUG'])
+
+# Initialize database with app
+db.init_app(app)
+
+def verify_table_creation():
+    """Verify that all tables were created successfully."""
+    try:
+        inspector = db.inspect(db.engine)
+        expected_tables = {
+            'country', 'port', 'client', 'shippingcompany', 'vessel', 'voyage',
+            'leg', 'container', 'containerhistory', 'containerstatus', 'manifest',
+            'lineitem', 'commodity', 'packtype', 'portpair', 'user', 'rate'
+        }
+        actual_tables = set(inspector.get_table_names())
+        missing_tables = expected_tables - actual_tables
+        
+        logger.debug("Expected tables: %s", expected_tables)
+        logger.debug("Actual tables: %s", actual_tables)
+        
+        if missing_tables:
+            raise Exception(f"Failed to create tables: {', '.join(missing_tables)}")
+        
+        logger.info("Successfully verified creation of %d tables", len(actual_tables))
+        return True
+    except Exception as e:
+        logger.error("Error during table verification: %s", str(e))
+        raise
+
 def populate_data():
     try:
-        print("Starting to populate data...")
+        logger.info("Starting to populate data...")
         
         # Dictionary to track sequence numbers
         sequence_counters = {}
 
         # Drop all tables and recreate them
-        print("Dropping existing tables...")
-        db.drop_all()
-        print("Creating tables...")
+        logger.info("Dropping existing tables...")
+        # Close any existing connections
+        db.session.close()
+        db.engine.dispose()
+        
+        # Get database path and ensure directory exists
+        db_path = app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')
+        db_dir = os.path.dirname(db_path)
+        
+        logger.info("Using database at: %s", db_path)
+        logger.info("Database directory: %s", db_dir)
+        
+        # Debug database configuration
+        logger.debug("Database engine: %s", db.engine)
+        logger.debug("Database session: %s", db.session)
+        
+        # Create database directory if it doesn't exist
+        if not os.path.exists(db_dir):
+            logger.info("Creating database directory: %s", db_dir)
+            os.makedirs(db_dir)
+            logger.info("Database directory created successfully")
+            
+        # Delete existing database file
+        if os.path.exists(db_path):
+            try:
+                logger.info("Removing existing database file: %s", db_path)
+                os.remove(db_path)
+                logger.info("Existing database file removed successfully")
+            except PermissionError as e:
+                logger.error("Could not delete existing database file: %s", str(e))
+                logger.error("Please ensure you have proper permissions")
+                raise
+        
+        logger.info("Creating tables...")
+        
+        # Debug model metadata
+        logger.debug("Model metadata tables: %s", db.Model.metadata.tables.keys())
+        
+        # Create tables with explicit bind
+        db.Model.metadata.create_all(bind=db.engine)
         db.create_all()
-        print("Tables created successfully")
+        
+        # Verify all tables were created
+        verify_table_creation()
 
         # Populate Level 1: Static Context
+        # Populate Level 1: Static Context
+        print("Populating countries...")
         countries = [
-            S014_Country(name=country)
+            Country(name=country)
             for country in ["USA", "Netherlands", "China", "India", "Germany", "UK", "Japan", "Australia", "Singapore", "Brazil"]
         ]
         db.session.add_all(countries)
+        db.session.commit()
 
+        print("Populating ports...")
         ports = [
-            S012_Port(name=name, country_id=random.randint(1, len(countries)), prefix=prefix)
+            Port(name=name, country_id=random.randint(1, len(countries)), prefix=prefix)
             for i, (name, prefix) in enumerate([
                 ("Port of Los Angeles", "USLAX"),
                 ("Port of Rotterdam", "NLRTM"),
@@ -98,24 +183,31 @@ def populate_data():
             ], start=1)
         ]
         db.session.add_all(ports)
+        db.session.commit()
 
+        print("Populating shipping companies...")
         companies = [
-            S008_ShippingCompany(name=name)
+            ShippingCompany(name=name)
             for name in ["Maersk Line", "CMA CGM", "MSC"]
         ]
         db.session.add_all(companies)
+        db.session.commit()
 
+        print("Populating pack types...")
         packtypes = [
-            S004_PackType(name=type_name, description=f"{type_name} Description")
+            PackType(name=type_name, description=f"{type_name} Description")
             for type_name in ["20ft Container", "40ft Container", "Refrigerated Container", "Flat Rack Container"]
         ]
         db.session.add_all(packtypes)
+        db.session.commit()
 
+        print("Populating container statuses...")
         statuses = [
-            S007_ContainerStatus(name=status, description=f"Container is {status.lower()}")
+            ContainerStatus(name=status, description=f"Container is {status.lower()}")
             for status in ["In Transit", "At Port", "Loaded", "Damaged"]
         ]
         db.session.add_all(statuses)
+        db.session.commit()
 
         # Company name components for generating realistic business names
         company_prefixes = ["Global", "Inter", "Trans", "Pacific", "Atlantic", "Euro", "Asian", "United", "International", "Premier"]
@@ -168,7 +260,7 @@ def populate_data():
             local_number = random.randint(1000000, 9999999)
             phone = f"+{country_codes[country_id]} {area_code} {local_number}"
             
-            client = S015_Client(
+            client = Client(
                 name=company_name,
                 address=f"{street_number} {street}",
                 town=city,
@@ -179,40 +271,50 @@ def populate_data():
             )
             clients.append(client)
         
+        print("Populating clients...")
         db.session.add_all(clients)
+        db.session.commit()
 
+        print("Populating commodities...")
         commodities = [
-            S003_Commodity(name=name, description=f"Shipments of {name.lower()}")
+            Commodity(name=name, description=f"Shipments of {name.lower()}")
             for name in ["Electronics", "Machinery", "Textiles", "Furniture", "Automobiles"]
         ]
         db.session.add_all(commodities)
+        db.session.commit()
 
+        print("Populating users...")
         users = [
-            S016_User(name=role, email=f"{role.lower().replace(' ', '_')}@harbor.com", password_hash="hashed_password")
+            User(name=role, email=f"{role.lower().replace(' ', '_')}@harbor.com", password_hash="hashed_password")
             for role in ["Operations Manager", "Harbor Master", "Shipping Clerk", "Cargo Inspector", "Logistics Coordinator"]
         ]
         db.session.add_all(users)
+        db.session.commit()
 
         # Populate Level 2
+        print("Populating vessels...")
         vessels = [
-            S009_Vessel(name=name, shipping_company_id=random.randint(1, len(companies)))
+            Vessel(name=name, shipping_company_id=random.randint(1, len(companies)))
             for name in ["MV Atlantic Star", "SS Oceanic", "HMS Victory", "Evergreen"]
         ]
         db.session.add_all(vessels)
+        db.session.commit()
 
+        print("Populating port pairs...")
         port_pairs = [
-            S013_PortPair(
+            PortPair(
                 pol_id=random.randint(1, len(ports)), pod_id=random.randint(1, len(ports)),
                 distance=random.randint(500, 2000), distance_rate_code=f"RATE_{i:03d}"
             )
             for i in range(50)
         ]
         db.session.add_all(port_pairs)
+        db.session.commit()
 
         # Populate Level 3
-        # Create meaningful voyage names
+        print("Populating voyages...")
         voyages = [
-            S010_Voyage(
+            Voyage(
                 name=f"{random.choice([
                     'Asia Express Line',
                     'Trans Pacific Service',
@@ -231,9 +333,9 @@ def populate_data():
             for i in range(100)
         ]
         db.session.add_all(voyages)
-        db.session.flush()  # Ensure voyages have IDs for leg creation
+        db.session.commit()  # Commit voyages to get their IDs
 
-        # Create legs for each voyage
+        print("Populating voyage legs...")
         legs = []
         for voyage in voyages:
             # Generate 3-7 legs per voyage
@@ -248,7 +350,7 @@ def populate_data():
                 departure_date = arrival_date + timedelta(days=1)  # 1 day at port
                 
                 legs.append(
-                    S011_Leg(
+                    Leg(
                         voyage_id=voyage.id,
                         leg_number=leg_num + 1,  # Start from 1
                         port_id=voyage_ports[leg_num].id,
@@ -257,10 +359,12 @@ def populate_data():
                     )
                 )
         db.session.add_all(legs)
+        db.session.commit()
 
         # Populate Level 4
+        print("Populating containers...")
         containers = [
-            S005_Container(
+            Container(
                 number=generate_container_number(
                     owner_code=random.choice(["MAEU", "CMAU", "CSQU"]),
                     equipment_type=random.choice(["22G", "45R", "20T", "40H"]),
@@ -272,10 +376,11 @@ def populate_data():
             for i in range(1, 1001)
         ]
         db.session.add_all(containers)
+        db.session.commit()
 
-        # Populate Container Histories
+        print("Populating container histories...")
         container_histories = [
-            S006_ContainerHistory(
+            ContainerHistory(
                 container_id=container_id,
                 port_id=random.randint(1, len(ports)),
                 client_id=random.randint(1, len(clients)),
@@ -287,14 +392,15 @@ def populate_data():
             for _ in range(5)  # 5 history records per container
         ]
         db.session.add_all(container_histories)
+        db.session.commit()
 
         # Populate Manifests
-        # Create manifests with proper bill of lading numbers
+        print("Populating manifests...")
         manifests = []
         for _ in range(200):
             # Get random voyage and its legs
-            voyage = db.session.query(S010_Voyage).get(random.randint(1, len(voyages)))
-            voyage_legs = db.session.query(S011_Leg).filter_by(voyage_id=voyage.id).order_by(S011_Leg.leg_number).all()
+            voyage = db.session.get(Voyage, random.randint(1, len(voyages)))
+            voyage_legs = db.session.query(Leg).filter_by(voyage_id=voyage.id).order_by(Leg.leg_number).all()
             
             # Select a random leg pair for loading and discharge
             leg_idx = random.randint(0, len(voyage_legs) - 2)  # Ensure we have a next leg for discharge
@@ -302,13 +408,13 @@ def populate_data():
             discharge_leg = voyage_legs[leg_idx + 1]
             
             # Use the leg's ports for POL and POD
-            pol = db.session.query(S012_Port).get(loading_leg.port_id)
-            pod = db.session.query(S012_Port).get(discharge_leg.port_id)
+            pol = db.session.get(Port, loading_leg.port_id)
+            pod = db.session.get(Port, discharge_leg.port_id)
             
             # Generate unique bill of lading
             bl_number = generate_bill_of_lading(voyage, pol, pod, sequence_counters)
             
-            manifest = S001_Manifest(
+            manifest = Manifest(
                 bill_of_lading=bl_number,
                 shipper_id=random.randint(1, len(clients)),
                 consignee_id=random.randint(1, len(clients)),
@@ -324,15 +430,15 @@ def populate_data():
             )
             manifests.append(manifest)
         db.session.add_all(manifests)
-        db.session.flush()  # Flush to get manifest IDs
+        db.session.commit()  # Commit to get manifest IDs
 
-        # Populate LineItems
+        print("Populating line items...")
         line_items = []
         for manifest in manifests:
             num_items = random.randint(1, 5)
             for _ in range(num_items):
                 line_items.append(
-                    S002_LineItem(
+                    LineItem(
                         manifest_id=manifest.id,
                         description=f"Cargo item for {manifest.bill_of_lading}",
                         quantity=random.randint(1, 100),
@@ -344,10 +450,11 @@ def populate_data():
                     )
                 )
         db.session.add_all(line_items)
+        db.session.commit()
 
-        # Populate Rates
+        print("Populating rates...")
         rates = [
-            S017_Rate(
+            Rate(
                 distance_rate_code=random.randint(100, 999),
                 commodity_id=random.randint(1, len(commodities)),
                 pack_type_id=random.randint(1, len(packtypes)),
@@ -358,10 +465,9 @@ def populate_data():
             for _ in range(300)
         ]
         db.session.add_all(rates)
-
-        # Commit all changes
         db.session.commit()
-        print("Data populated successfully.")
+
+        print("All data populated successfully.")
     except Exception as e:
         print(f"Error during data population: {str(e)}")
         db.session.rollback()

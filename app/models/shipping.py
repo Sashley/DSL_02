@@ -1,4 +1,6 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 from datetime import datetime, date, time
 from decimal import Decimal
 from sqlalchemy import Index
@@ -292,5 +294,3 @@ class Rate(db.Model):
     commodity = db.relationship('Commodity', back_populates='rates', foreign_keys=[commodity_id])
     pack_type = db.relationship('PackType', back_populates='rates', foreign_keys=[pack_type_id])
     client = db.relationship('Client', back_populates='rates', foreign_keys=[client_id])
-
-
