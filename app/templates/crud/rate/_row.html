@@ -1,0 +1,48 @@
+{% set relationship_fields = ["commodity_id", "pack_type_id", "client_id"] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "distance_rate_code".endswith('_id') and "distance_rate_code" in relationship_fields %}
+            {{ item.distance_rate_c.name if item.distance_rate_c and hasattr(item.distance_rate_c, 'name') else item.distance_rate_code }}
+        {% else %}
+            {{ item.distance_rate_code }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "commodity_id".endswith('_id') and "commodity_id" in relationship_fields %}
+            {{ item.commodity.name if item.commodity and hasattr(item.commodity, 'name') else item.commodity_id }}
+        {% else %}
+            {{ item.commodity_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "pack_type_id".endswith('_id') and "pack_type_id" in relationship_fields %}
+            {{ item.pack_type.name if item.pack_type and hasattr(item.pack_type, 'name') else item.pack_type_id }}
+        {% else %}
+            {{ item.pack_type_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "client_id".endswith('_id') and "client_id" in relationship_fields %}
+            {{ item.client.name if item.client and hasattr(item.client, 'name') else item.client_id }}
+        {% else %}
+            {{ item.client_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "rate".endswith('_id') and "rate" in relationship_fields %}
+            {{ item.r.name if item.r and hasattr(item.r, 'name') else item.rate }}
+        {% else %}
+            {{ item.rate }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.rate.edit_rate', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.rate.delete_rate', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this Rate?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

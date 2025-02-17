@@ -1,0 +1,36 @@
+{% set relationship_fields = ["port_id"] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "number".endswith('_id') and "number" in relationship_fields %}
+            {{ item.num.name if item.num and hasattr(item.num, 'name') else item.number }}
+        {% else %}
+            {{ item.number }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "port_id".endswith('_id') and "port_id" in relationship_fields %}
+            {{ item.port.name if item.port and hasattr(item.port, 'name') else item.port_id }}
+        {% else %}
+            {{ item.port_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "updated".endswith('_id') and "updated" in relationship_fields %}
+            {{ item.upda.name if item.upda and hasattr(item.upda, 'name') else item.updated }}
+        {% else %}
+            {{ item.updated }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.container.edit_container', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.container.delete_container', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this Container?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

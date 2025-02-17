@@ -1,0 +1,48 @@
+{% set relationship_fields = ["voyage_id", "port_id"] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "voyage_id".endswith('_id') and "voyage_id" in relationship_fields %}
+            {{ item.voyage.name if item.voyage and hasattr(item.voyage, 'name') else item.voyage_id }}
+        {% else %}
+            {{ item.voyage_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "port_id".endswith('_id') and "port_id" in relationship_fields %}
+            {{ item.port.name if item.port and hasattr(item.port, 'name') else item.port_id }}
+        {% else %}
+            {{ item.port_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "leg_number".endswith('_id') and "leg_number" in relationship_fields %}
+            {{ item.leg_num.name if item.leg_num and hasattr(item.leg_num, 'name') else item.leg_number }}
+        {% else %}
+            {{ item.leg_number }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "eta".endswith('_id') and "eta" in relationship_fields %}
+            {{ item..name if item. and hasattr(item., 'name') else item.eta }}
+        {% else %}
+            {{ item.eta }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "etd".endswith('_id') and "etd" in relationship_fields %}
+            {{ item..name if item. and hasattr(item., 'name') else item.etd }}
+        {% else %}
+            {{ item.etd }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.leg.edit_leg', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.leg.delete_leg', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this Leg?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

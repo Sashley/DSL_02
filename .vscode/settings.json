@@ -1,3 +1,4 @@
 {
-  "python.analysis.extraPaths": ["./c01"]
+  "python.analysis.extraPaths": ["./c01"],
+  "cline.modelSettings.o3Mini.reasoningEffort": "medium"
 }

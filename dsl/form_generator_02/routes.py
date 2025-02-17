@@ -37,11 +37,9 @@ def generate_crud_routes(json_file: str | Path, output_dir: str | Path) -> None:
         
         route_file = output_path / f"{table_name}.py"
         
-        # Check if this is a complex model that needs relationship helpers
-        is_complex = model_name in ['S001_Manifest', 'S002_LineItem']
-        
         # Get relationships and build imports
         relationships = get_model_relationships(model_data)
+        has_relationships = bool(relationships)
         related_models = {rel["target_model"] for rel in relationships}
         # Build imports with proper comma handling
         model_imports = f"{model_name}"
@@ -53,7 +51,7 @@ from app.models.shipping import {model_imports}
 from app import db
 from sqlalchemy import or_, func"""
         
-        if is_complex:
+        if has_relationships:
             imports += f"""
 from app.utils.relationships import get_related_data, create_{table_name}, update_{table_name}, delete_{table_name}"""
         
@@ -86,12 +84,12 @@ def get_search_filter(model, search_term):
                     # Add condition for relationship search
                     conditions.append(
                         getattr(model, rel["relationship_field"]).has(
-                            func.lower(getattr(globals()[rel["target_model"]], 'name')).like(f'%{{{{search_term}}}}%')
+                            func.lower(getattr(globals()[rel["target_model"]], 'name')).like("%" + search_term + "%")
                         )
                     )
             else:
                 # Handle regular fields
-                conditions.append(func.lower(getattr(model, field)).like(f'%{{{{search_term}}}}%'))
+                conditions.append(func.lower(getattr(model, field)).like("%" + search_term + "%"))
     
     return or_(*conditions) if conditions else None
 
@@ -139,7 +137,7 @@ def create_{table_name}():
         try:
             {f'''success, item = create_{table_name}(request.form)
             if success:
-                return redirect(url_for("crud.{table_name}.list_{table_name}"))''' if is_complex else f'''item = {model_name}()
+                return redirect(url_for("crud.{table_name}.list_{table_name}"))''' if has_relationships else f'''item = {model_name}()
             {"".join(f"""
             if '{field}' in request.form:
                 item.{field} = request.form['{field}']""" for field in fields.keys() if field != 'id')}
@@ -153,12 +151,12 @@ def create_{table_name}():
             return render_template('crud/{table_name}/form.html', 
                                 edit=False, 
                                 form_action=url_for('crud.{table_name}.create_{table_name}')
-                                {', **get_related_data()' if is_complex else ''})
+                                {', **get_related_data()' if has_relationships else ''})
     
     return render_template('crud/{table_name}/form.html', 
                          edit=False, 
                          form_action=url_for('crud.{table_name}.create_{table_name}')
-                         {', **get_related_data()' if is_complex else ''})
+                         {', **get_related_data()' if has_relationships else ''})
 
 @bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 def edit_{table_name}(id):
@@ -167,7 +165,7 @@ def edit_{table_name}(id):
     if request.method == 'POST':
         try:
             {f'''if update_{table_name}(item, request.form):
-                return redirect(url_for("crud.{table_name}.list_{table_name}"))''' if is_complex else f'''{"".join(f"""
+                return redirect(url_for("crud.{table_name}.list_{table_name}"))''' if has_relationships else f'''{"".join(f"""
             if '{field}' in request.form:
                 item.{field} = request.form['{field}']""" for field in fields.keys() if field != 'id')}
             db.session.commit()
@@ -180,19 +178,19 @@ def edit_{table_name}(id):
                                 edit=True, 
                                 item=item,
                                 form_action=url_for('crud.{table_name}.edit_{table_name}', id=id)
-                                {', **get_related_data()' if is_complex else ''})
+                                {', **get_related_data()' if has_relationships else ''})
     
     return render_template('crud/{table_name}/form.html', 
                          edit=True, 
                          item=item,
                          form_action=url_for('crud.{table_name}.edit_{table_name}', id=id)
-                         {', **get_related_data()' if is_complex else ''})
+                         {', **get_related_data()' if has_relationships else ''})
 
 @bp.route('/<int:id>/delete', methods=['DELETE'])
 def delete_{table_name}(id):
     try:
         item = {model_name}.query.get_or_404(id)
-        {f'success = delete_{table_name}(item)' if is_complex else 'db.session.delete(item)\n        db.session.commit()\n        success = True'}
+        {f'success = delete_{table_name}(item)' if has_relationships else 'db.session.delete(item)\n        db.session.commit()\n        success = True'}
         return '', 204 if success else 500
     except Exception as e:
         db.session.rollback()

@@ -1,0 +1,48 @@
+{% set relationship_fields = ["manifest_id", "pack_type_id", "commodity_id", "container_id", "user_id"] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "manifest_id".endswith('_id') and "manifest_id" in relationship_fields %}
+            {{ item.manifest.name if item.manifest and hasattr(item.manifest, 'name') else item.manifest_id }}
+        {% else %}
+            {{ item.manifest_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "description".endswith('_id') and "description" in relationship_fields %}
+            {{ item.descript.name if item.descript and hasattr(item.descript, 'name') else item.description }}
+        {% else %}
+            {{ item.description }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "quantity".endswith('_id') and "quantity" in relationship_fields %}
+            {{ item.quant.name if item.quant and hasattr(item.quant, 'name') else item.quantity }}
+        {% else %}
+            {{ item.quantity }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "weight".endswith('_id') and "weight" in relationship_fields %}
+            {{ item.wei.name if item.wei and hasattr(item.wei, 'name') else item.weight }}
+        {% else %}
+            {{ item.weight }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "volume".endswith('_id') and "volume" in relationship_fields %}
+            {{ item.vol.name if item.vol and hasattr(item.vol, 'name') else item.volume }}
+        {% else %}
+            {{ item.volume }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.lineitem.edit_lineitem', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.lineitem.delete_lineitem', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this LineItem?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

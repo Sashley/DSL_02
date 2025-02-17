@@ -3,82 +3,295 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8">Shipping Management Dashboard</h1>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Manifests -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Manifests</h2>
-            <p class="text-gray-600 mb-4">Manage shipping manifests and related documents</p>
-            <a href="{{ url_for('crud.s001_manifest.list_s001_manifest') }}" 
-               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                View Manifests
-            </a>
-        </div>
+<!-- Slide-out Menu Toggle -->
+<button id="menu-toggle" 
+        class="fixed top-4 left-4 z-50 bg-blue-500 text-white p-2 rounded-lg shadow-lg hover:bg-blue-600"
+        onclick="document.getElementById('slide-menu').classList.toggle('-translate-x-64')">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
 
-        <!-- Line Items -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Line Items</h2>
-            <p class="text-gray-600 mb-4">Track individual shipping items and their details</p>
-            <a href="{{ url_for('crud.s002_lineitem.list_s002_lineitem') }}" 
-               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                View Line Items
-            </a>
-        </div>
-
-        <!-- Clients -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Clients</h2>
-            <p class="text-gray-600 mb-4">Manage client information and relationships</p>
-            <a href="{{ url_for('crud.s015_client.list_s015_client') }}" 
-               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                View Clients
-            </a>
-        </div>
-
-        <!-- Users -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Users</h2>
-            <p class="text-gray-600 mb-4">Manage system users and their permissions</p>
-            <a href="{{ url_for('crud.s016_user.list_s016_user') }}" 
-               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                View Users
-            </a>
-        </div>
-
-        <!-- Commodities -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Commodities</h2>
-            <p class="text-gray-600 mb-4">Manage shipping commodities and their classifications</p>
-            <a href="{{ url_for('crud.s003_commodity.list_s003_commodity') }}" 
-               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                View Commodities
-            </a>
-        </div>
-
-        <!-- Quick Links -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Quick Links</h2>
+<!-- Slide-out Menu -->
+<div id="slide-menu" 
+     class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white transform -translate-x-64 transition-transform duration-300 ease-in-out z-40">
+    <div class="p-4">
+        <h2 class="text-xl font-bold mb-4">Navigation</h2>
+        <!-- Menu Categories -->
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-400 mb-2">Operations</h3>
             <ul class="space-y-2">
                 <li>
-                    <a href="{{ url_for('crud.s012_port.list_s012_port') }}" 
-                       class="text-blue-600 hover:text-blue-800">Ports</a>
+                    <a href="{{ url_for('crud.manifest.list_manifest') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Manifests
+                    </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('crud.s008_shippingcompany.list_s008_shippingcompany') }}" 
-                       class="text-blue-600 hover:text-blue-800">Shipping Companies</a>
+                    <a href="{{ url_for('crud.lineitem.list_lineitem') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        LineItems
+                    </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('crud.s009_vessel.list_s009_vessel') }}" 
-                       class="text-blue-600 hover:text-blue-800">Vessels</a>
+                    <a href="{{ url_for('crud.container.list_container') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Containers
+                    </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('crud.s010_voyage.list_s010_voyage') }}" 
-                       class="text-blue-600 hover:text-blue-800">Voyages</a>
+                    <a href="{{ url_for('crud.containerhistory.list_containerhistory') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        ContainerHistorys
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-400 mb-2">Planning</h3>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('crud.voyage.list_voyage') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Voyages
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.vessel.list_vessel') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Vessels
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.port.list_port') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Ports
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.portpair.list_portpair') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        PortPairs
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.leg.list_leg') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Legs
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-400 mb-2">Business</h3>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('crud.client.list_client') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Clients
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.shippingcompany.list_shippingcompany') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        ShippingCompanys
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.rate.list_rate') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Rates
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-400 mb-2">Reference</h3>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('crud.commodity.list_commodity') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Commoditys
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.packtype.list_packtype') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        PackTypes
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.containerstatus.list_containerstatus') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        ContainerStatuss
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('crud.country.list_country') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Countrys
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-400 mb-2">System</h3>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('crud.user.list_user') }}"
+                       class="block text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded">
+                        Users
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
+
+<!-- Main Dashboard Content -->
+<div class="ml-0 transition-margin duration-300 ease-in-out">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Manifest Activity Chart -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-lg font-semibold mb-4">Manifest Activity</h3>
+            <canvas id="manifestChart"></canvas>
+        </div>
+
+        <!-- Container Status Chart -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-lg font-semibold mb-4">Container Status</h3>
+            <canvas id="containerChart"></canvas>
+        </div>
+
+        <!-- Commodity Distribution Chart -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-lg font-semibold mb-4">Commodity Distribution</h3>
+            <canvas id="commodityChart"></canvas>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-lg font-semibold mb-4">Quick Stats</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="text-center">
+                    <p class="text-gray-600">Active Manifests</p>
+                    <p class="text-2xl font-bold text-blue-600">{{ manifest_count }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-600">Containers in Transit</p>
+                    <p class="text-2xl font-bold text-green-600">{{ container_count }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-600">Upcoming Voyages</p>
+                    <p class="text-2xl font-bold text-purple-600">{{ voyage_count }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-600">Active Clients</p>
+                    <p class="text-2xl font-bold text-orange-600">{{ client_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Initialization -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to initialize charts with data
+    async function initializeCharts() {
+        try {
+            // Manifest Activity Chart
+            const manifestResponse = await fetch('/api/chart/manifest-activity');
+            const manifestData = await manifestResponse.json();
+            new Chart(document.getElementById('manifestChart'), {
+                type: 'line',
+                data: {
+                    labels: manifestData.labels,
+                    datasets: [{
+                        label: 'New Manifests',
+                        data: manifestData.data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Container Status Chart
+            const containerResponse = await fetch('/api/chart/container-status');
+            const containerData = await containerResponse.json();
+            new Chart(document.getElementById('containerChart'), {
+                type: 'bar',
+                data: {
+                    labels: containerData.labels,
+                    datasets: [{
+                        label: 'Containers',
+                        data: containerData.data,
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(139, 92, 246)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Commodity Distribution Chart
+            const commodityResponse = await fetch('/api/chart/commodity-distribution');
+            const commodityData = await commodityResponse.json();
+            new Chart(document.getElementById('commodityChart'), {
+                type: 'pie',
+                data: {
+                    labels: commodityData.labels,
+                    datasets: [{
+                        data: commodityData.data,
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(139, 92, 246)',
+                            'rgb(107, 114, 128)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing charts:', error);
+        }
+    }
+
+    // Initialize charts
+    initializeCharts();
+});
+
+// Menu toggle functionality
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    const content = document.querySelector('.ml-0');
+    content.classList.toggle('md:ml-64');
+});
+</script>
 {% endblock %}

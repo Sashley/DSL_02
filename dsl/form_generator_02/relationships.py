@@ -17,35 +17,30 @@ def generate_relationship_helpers(json_file: str | Path, output_dir: str | Path)
     with open(json_path, "r") as f:
         data = json.load(f)
     
-    # Generate helpers for complex models. 
-    # Complex models are only those with relationships, and they should be tested for in the code. 
-    # There is a blank/ unused 'Relationships' list in 'shipping.json' that could be used?.
-
-    complex_models = {
-        'S001_Manifest': {
-            'relationships': [
-                ('shipper', 'S015_Client'),
-                ('consignee', 'S015_Client'),
-                ('vessel', 'S009_Vessel'),
-                ('voyage', 'S010_Voyage'),
-                ('port_of_loading', 'S012_Port'),
-                ('port_of_discharge', 'S012_Port')
-            ]
-        },
-        'S002_LineItem': {
-            'relationships': [
-                ('pack_type', 'S004_PackType'),
-                ('commodity', 'S003_Commodity'),
-                ('container', 'S005_Container'),
-                ('manifest', 'S001_Manifest')
-            ]
-        }
-    }
+    # Generate helpers for models with relationships
+    complex_models = {}
+    
+    # Identify models with relationships
+    for model_name, model_data in data["Models"].items():
+        relationships = []
+        for field_name, field_data in model_data["Fields"].items():
+            if "relationship" in field_data:
+                rel = field_data["relationship"]
+                relationships.append((
+                    rel["field_name"],  # Use field_name from relationship
+                    rel["target_model"]  # Use target_model directly
+                ))
+        
+        # Only include models that have relationships
+        if relationships:
+            complex_models[model_name] = {
+                'relationships': relationships
+            }
     
     for model_name, config in complex_models.items():
         helper_file = output_path / f"{model_name.lower()}_helpers.py"
         helper_content = f"""from flask import flash
-from app.models.shipping import {model_name}, {', '.join(rel[1] for rel in config['relationships'])}
+from app.models.shipping import {model_name}, {', '.join(sorted(set(rel[1] for rel in config['relationships'])))}
 from app import db
 
 def get_related_data():

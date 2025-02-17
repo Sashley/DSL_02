@@ -1,0 +1,73 @@
+{% macro render_menu() %}
+    <nav class="bg-white shadow">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="text-blue-600 font-bold text-xl">Shipping App</a>
+                    <a href="/" class="text-gray-700 hover:text-gray-900">Home</a>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="text-gray-700 hover:text-gray-900 group inline-flex items-center space-x-2">
+                            <span>Data Management</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                            <div class="py-1">
+                                <!-- Operations -->
+                                <div class="px-3 py-2 text-xs font-semibold text-gray-500">Operations</div>
+                                <a href="{{ url_for('crud.manifest.list_manifest') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Manifests</a>
+                                <a href="{{ url_for('crud.lineitem.list_lineitem') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">LineItems</a>
+                                <a href="{{ url_for('crud.container.list_container') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Containers</a>
+                                <a href="{{ url_for('crud.containerhistory.list_containerhistory') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ContainerHistorys</a>
+
+                                <!-- Planning -->
+                                <div class="px-3 py-2 text-xs font-semibold text-gray-500">Planning</div>
+                                <a href="{{ url_for('crud.voyage.list_voyage') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Voyages</a>
+                                <a href="{{ url_for('crud.vessel.list_vessel') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vessels</a>
+                                <a href="{{ url_for('crud.port.list_port') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ports</a>
+                                <a href="{{ url_for('crud.portpair.list_portpair') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">PortPairs</a>
+                                <a href="{{ url_for('crud.leg.list_leg') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Legs</a>
+
+                                <!-- Business -->
+                                <div class="px-3 py-2 text-xs font-semibold text-gray-500">Business</div>
+                                <a href="{{ url_for('crud.client.list_client') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Clients</a>
+                                <a href="{{ url_for('crud.shippingcompany.list_shippingcompany') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ShippingCompanys</a>
+                                <a href="{{ url_for('crud.rate.list_rate') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rates</a>
+
+                                <!-- Reference -->
+                                <div class="px-3 py-2 text-xs font-semibold text-gray-500">Reference</div>
+                                <a href="{{ url_for('crud.commodity.list_commodity') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Commoditys</a>
+                                <a href="{{ url_for('crud.packtype.list_packtype') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">PackTypes</a>
+                                <a href="{{ url_for('crud.containerstatus.list_containerstatus') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ContainerStatuss</a>
+                                <a href="{{ url_for('crud.country.list_country') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Countrys</a>
+
+                                <!-- System -->
+                                <div class="px-3 py-2 text-xs font-semibold text-gray-500">System</div>
+                                <a href="{{ url_for('crud.user.list_user') }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Users</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+{% endmacro %}

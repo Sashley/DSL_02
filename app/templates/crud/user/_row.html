@@ -1,0 +1,36 @@
+{% set relationship_fields = [] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "name".endswith('_id') and "name" in relationship_fields %}
+            {{ item.n.name if item.n and hasattr(item.n, 'name') else item.name }}
+        {% else %}
+            {{ item.name }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "email".endswith('_id') and "email" in relationship_fields %}
+            {{ item.em.name if item.em and hasattr(item.em, 'name') else item.email }}
+        {% else %}
+            {{ item.email }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "password_hash".endswith('_id') and "password_hash" in relationship_fields %}
+            {{ item.password_h.name if item.password_h and hasattr(item.password_h, 'name') else item.password_hash }}
+        {% else %}
+            {{ item.password_hash }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.user.edit_user', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.user.delete_user', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this User?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

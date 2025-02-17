@@ -1,0 +1,48 @@
+{% set relationship_fields = ["country_id"] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "name".endswith('_id') and "name" in relationship_fields %}
+            {{ item.n.name if item.n and hasattr(item.n, 'name') else item.name }}
+        {% else %}
+            {{ item.name }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "address".endswith('_id') and "address" in relationship_fields %}
+            {{ item.addr.name if item.addr and hasattr(item.addr, 'name') else item.address }}
+        {% else %}
+            {{ item.address }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "town".endswith('_id') and "town" in relationship_fields %}
+            {{ item.t.name if item.t and hasattr(item.t, 'name') else item.town }}
+        {% else %}
+            {{ item.town }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "country_id".endswith('_id') and "country_id" in relationship_fields %}
+            {{ item.country.name if item.country and hasattr(item.country, 'name') else item.country_id }}
+        {% else %}
+            {{ item.country_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "contact_person".endswith('_id') and "contact_person" in relationship_fields %}
+            {{ item.contact_per.name if item.contact_per and hasattr(item.contact_per, 'name') else item.contact_person }}
+        {% else %}
+            {{ item.contact_person }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.client.edit_client', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.client.delete_client', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this Client?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

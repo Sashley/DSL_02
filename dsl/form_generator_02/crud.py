@@ -38,25 +38,18 @@ def should_include_field(field_name: str, field_data: Dict[str, Any]) -> bool:
     
     return True
 
-def get_relationship_fields(fields: Dict[str, Any]) -> List[Tuple[str, str, str]]:
+def get_relationship_fields(fields: Dict[str, Any]) -> List[Tuple[str, str, str, str]]:
     """Get fields that represent relationships."""
     relationship_fields = []
     for field_name, field_data in fields.items():
         if "relationship" in field_data:
             rel = field_data["relationship"]
-            # Handle special cases for shared target models
-            if rel["target_model"] == "S015_Client":
-                plural_name = "clients"  # Both shipper and consignee use clients
-            elif rel["target_model"] == "S012_Port":
-                plural_name = "ports"    # Both port_of_loading and port_of_discharge use ports
-            else:
-                # Use target model name for template variable
-                # e.g. S009_Vessel -> vessels
-                plural_name = rel["target_model"].split('_')[1].lower() + 's'
-            relationship_fields.append((field_name, plural_name, rel["target_model"]))
+            # Add display field - default to 'name' but can be overridden
+            display_field = rel.get("display_field", "name")
+            relationship_fields.append((field_name, rel["field_name"], rel["target_model"], display_field))
     return relationship_fields
 
-def generate_form_fields(fields: Dict[str, Any], relationship_fields: List[Tuple[str, str, str]]) -> str:
+def generate_form_fields(fields: Dict[str, Any], relationship_fields: List[Tuple[str, str, str, str]]) -> str:
     """Generate the form fields HTML."""
     fields_html = []
     for field_name, field_data in fields.items():
@@ -68,9 +61,12 @@ def generate_form_fields(fields: Dict[str, Any], relationship_fields: List[Tuple
         input_type = get_input_type(field_name, field_data)
         
         if is_relationship:
-            rel_name = next(rel[1] for rel in relationship_fields if field_name == rel[0])
+            rel = next((rel for rel in relationship_fields if field_name == rel[0]), None)
+            rel_name, display_field = rel[1], rel[3]
             # Remove _id from field name for display
             display_name = field_name[:-3] if field_name.endswith('_id') else field_name
+            # Use plural form for template variable
+            template_var = f"{rel_name}s"
             field_html = f"""
             <div class="flex flex-col">
                 <label for="{field_name}" class="text-sm font-semibold text-gray-600 mb-1">{display_name.title().replace('_', ' ')}</label>
@@ -78,9 +74,9 @@ def generate_form_fields(fields: Dict[str, Any], relationship_fields: List[Tuple
                         name="{field_name}"
                         class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select...</option>
-                    {{% for related in {rel_name} %}}
+                    {{% for related in {template_var} %}}
                     <option value="{{{{ related.id }}}}" {{{{ 'selected' if edit and item.{field_name} == related.id else '' }}}}>
-                        {{{{ related.name if hasattr(related, 'name') else related.id }}}}
+                        {{{{ getattr(related, '{display_field}', related.id) }}}}
                     </option>
                     {{% endfor %}}
                 </select>
@@ -150,7 +146,7 @@ def generate_crud_templates(json_file: str | Path, output_dir: str | Path) -> No
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-100 sticky top-0 z-10">
                         <tr>
-                            {''.join(f'<th class="px-4 py-2 text-left text-sm font-bold text-gray-700 border-b">{field.replace("_", " ").title()}</th>' for field in display_fields)}
+                            {''.join(f'<th class="px-4 py-2 text-left text-sm font-bold text-gray-700 border-b">{field[:-3].replace("_", " ").title() if field.endswith("_id") else field.replace("_", " ").title()}</th>' for field in display_fields)}
                             <th class="px-4 py-2 text-left text-sm font-bold text-gray-700 border-b">Actions</th>
                         </tr>
                     </thead>
@@ -196,12 +192,20 @@ def generate_crud_templates(json_file: str | Path, output_dir: str | Path) -> No
 {{% include 'crud/{table_name}/_row.html' %}}
 {{% endfor %}}""")
 
+        # Get relationship field names for template
+        relationship_field_names = [rel[0] for rel in relationship_fields]
+
         # Generate Row Template
         row_template = model_dir / "_row.html"
         row_template.write_text(f"""\
+{{% set relationship_fields = {json.dumps(relationship_field_names)} %}}
 <tr class="hover:bg-gray-50 group">
     {''.join(f'''<td class="px-4 py-1 whitespace-nowrap border-b text-sm">
-        {{{{ item.{field}_name if '{field}' in item.__dict__ and '{field}'.endswith('_id') else item.{field} }}}}
+        {{% if "{field}".endswith('_id') and "{field}" in relationship_fields %}}
+            {{{{ item.{field[:-3]}.name if item.{field[:-3]} and hasattr(item.{field[:-3]}, 'name') else item.{field} }}}}
+        {{% else %}}
+            {{{{ item.{field} }}}}
+        {{% endif %}}
     </td>''' for field in display_fields)}
     <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
         <div class="invisible group-hover:visible flex justify-end space-x-2">

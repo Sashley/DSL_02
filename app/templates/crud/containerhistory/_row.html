@@ -1,0 +1,48 @@
+{% set relationship_fields = ["container_id", "port_id", "client_id", "container_status_id"] %}
+<tr class="hover:bg-gray-50 group">
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "container_id".endswith('_id') and "container_id" in relationship_fields %}
+            {{ item.container.name if item.container and hasattr(item.container, 'name') else item.container_id }}
+        {% else %}
+            {{ item.container_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "port_id".endswith('_id') and "port_id" in relationship_fields %}
+            {{ item.port.name if item.port and hasattr(item.port, 'name') else item.port_id }}
+        {% else %}
+            {{ item.port_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "client_id".endswith('_id') and "client_id" in relationship_fields %}
+            {{ item.client.name if item.client and hasattr(item.client, 'name') else item.client_id }}
+        {% else %}
+            {{ item.client_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "container_status_id".endswith('_id') and "container_status_id" in relationship_fields %}
+            {{ item.container_status.name if item.container_status and hasattr(item.container_status, 'name') else item.container_status_id }}
+        {% else %}
+            {{ item.container_status_id }}
+        {% endif %}
+    </td><td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        {% if "damage".endswith('_id') and "damage" in relationship_fields %}
+            {{ item.dam.name if item.dam and hasattr(item.dam, 'name') else item.damage }}
+        {% else %}
+            {{ item.damage }}
+        {% endif %}
+    </td>
+    <td class="px-4 py-1 whitespace-nowrap border-b text-sm">
+        <div class="invisible group-hover:visible flex justify-end space-x-2">
+            <a href="{{ url_for('crud.containerhistory.edit_containerhistory', id=item.id) }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Edit
+            </a>
+            <button hx-delete="{{ url_for('crud.containerhistory.delete_containerhistory', id=item.id) }}"
+                    hx-confirm="Are you sure you want to delete this ContainerHistory?"
+                    hx-target="closest tr"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>

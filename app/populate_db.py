@@ -133,16 +133,10 @@ def populate_data():
             os.makedirs(db_dir)
             logger.info("Database directory created successfully")
             
-        # Delete existing database file
-        if os.path.exists(db_path):
-            try:
-                logger.info("Removing existing database file: %s", db_path)
-                os.remove(db_path)
-                logger.info("Existing database file removed successfully")
-            except PermissionError as e:
-                logger.error("Could not delete existing database file: %s", str(e))
-                logger.error("Please ensure you have proper permissions")
-                raise
+        # Drop all existing tables
+        logger.info("Dropping all existing tables...")
+        db.Model.metadata.drop_all(bind=db.engine)
+        logger.info("All tables dropped successfully")
         
         logger.info("Creating tables...")
         
