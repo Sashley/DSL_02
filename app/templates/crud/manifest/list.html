@@ -16,7 +16,6 @@
 
 {% block table_content %}
     <div id="manifest-table"
-         class="overflow-hidden"
          hx-trigger="manifestSaved from:body"
          hx-get="{{ url_for('crud.manifest.list_manifest') }}"
          hx-target="#manifest-table">

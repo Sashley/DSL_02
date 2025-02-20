@@ -4,6 +4,24 @@
   border-collapse: separate;
   border-spacing: 0;
   position: relative;
+  table-layout: fixed;
+}
+
+/* Flexible column styles */
+.manifest-table td.flex-col {
+  min-width: 100px;
+  max-width: none;
+  width: auto;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fixed action column */
+.manifest-table td.action-col {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
 }
 
 /* Loading state styles */

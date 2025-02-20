@@ -30,9 +30,8 @@
     </div>
 
     <div class="bg-white shadow rounded-lg">
-        <!-- Dynamic height container with overflow -->
-        <div id="tableContainer" class="overflow-auto">
-            <div id="{{ entity_name|lower }}-table">
+        <div id="tableContainer" class="overflow-y-auto border border-gray-200 rounded-t-lg">
+            <div id="{{ entity_name|lower }}-table" class="min-w-full">
                 {% block table_content %}{% endblock %}
             </div>
         </div>
@@ -103,18 +102,41 @@
     }
 }
 
-/* Ensure table header stays fixed */
-thead {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background-color: white;
+/* Table container styles */
+#tableContainer {
+    height: calc(var(--row-height, 2.5rem) * var(--page-size, 10) + 3rem);
+    overflow-x: hidden;
 }
 
-/* Force table to maintain its structure */
+/* Table structure */
 table {
     width: 100%;
     table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Sticky header styles */
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: rgb(249 250 251);
+}
+
+thead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+thead th {
+    background-color: rgb(249 250 251);
+    border-bottom: 1px solid #e5e7eb;
 }
 </style>
 
@@ -123,47 +145,16 @@ table {
 document.addEventListener('DOMContentLoaded', function() {
     let searchTimeout;
     const searchInput = document.getElementById('searchInput');
-    const tableContainer = document.getElementById('tableContainer');
     const pageSizeSelect = document.getElementById('pageSize');
     let selectedRow = null;
 
-    function adjustTableHeight() {
-        const pageSize = parseInt(pageSizeSelect.value);
-        const rowHeight = 36; // Approximate height of each row
-        const headerHeight = document.querySelector('thead').offsetHeight;
-        let containerHeight;
-
-        if (pageSize <= 3) {
-            containerHeight = (rowHeight * 3) + headerHeight;
-        } else if (pageSize <= 5) {
-            containerHeight = (rowHeight * 5) + headerHeight;
-        } else if (pageSize <= 10) {
-            containerHeight = (rowHeight * 10) + headerHeight;
-        } else {
-            containerHeight = Math.min(window.innerHeight - 300, (rowHeight * pageSize) + headerHeight);
-        }
-
-        tableContainer.style.height = `${containerHeight}px`;
+    // Set CSS variables for row height calculations
+    function updateRowHeightVars() {
+        document.documentElement.style.setProperty('--page-size', pageSizeSelect.value);
     }
-
-    // Initial height adjustment
-    adjustTableHeight();
-
-    // Adjust height when page size changes
-    pageSizeSelect.addEventListener('change', function() {
-        setTimeout(adjustTableHeight, 100); // Wait for HTMX to update the content
-    });
-
-    // Adjust height when window resizes
-    window.addEventListener('resize', adjustTableHeight);
-
-    // Adjust height after HTMX swaps
-    document.body.addEventListener('htmx:afterSwap', function(evt) {
-        const tableDiv = document.getElementById('manifest-table');
-        if (tableDiv) {
-            adjustTableHeight();
-        }
-    });
+    
+    updateRowHeightVars();
+    pageSizeSelect.addEventListener('change', updateRowHeightVars);
 
     window.selectRow = function(row, identifier) {
         // Clear any existing selected rows in the entire table
@@ -200,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector(`#${entityName}-table`).innerHTML = newResults;
                 document.getElementById('selectedItem').textContent = '';
                 selectedRow = null;
-                adjustTableHeight();
             })
             .catch(error => console.error('Error:', error));
     }
