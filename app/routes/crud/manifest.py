@@ -192,39 +192,39 @@ def list_manifest():
                     'key': 'bill_of_lading',
                     'label': 'Bill of Lading',
                     'sortable': True,
-                    'class': 'w-[100px] sm:w-[160px] px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
-                    'width_class': 'max-w-[150px] sm:max-w-[1200px]'
+                    'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                    'width_class': 'w-[180px] sm:w-[200px] max-w-[200px] sm:max-w-[250px]'
                 },
                 {
                     'key': 'shipper_name',
                     'label': 'Shipper',
                     'sortable': True,
-                    'class': 'w-[160px] sm:w-[180px] px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
-                    'width_class': 'max-w-[150px] md:max-w-[170px]'
+                    'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                    'width_class': 'w-[150px] sm:w-[180px] max-w-[150px] sm:max-w-[180px]'
                 },
                 {
                     'key': 'consignee_name',
                     'label': 'Consignee',
                     'sortable': True,
-                    'class': 'w-[160px] sm:w-[180px] px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                    'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
                     'responsive_class': 'hidden md:table-cell',
-                    'width_class': 'max-w-[150px] sm:max-w-[170px]'
+                    'width_class': 'w-[150px] sm:w-[180px] max-w-[150px] sm:max-w-[180px]'
                 },
                 {
                     'key': 'vessel_name',
                     'label': 'Vessel',
                     'sortable': True,
-                    'class': 'w-[140px] sm:w-[160px] px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                    'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
                     'responsive_class': 'hidden lg:table-cell',
-                    'width_class': 'max-w-[130px] sm:max-w-[150px]'
+                    'width_class': 'w-[130px] sm:w-[150px] max-w-[130px] sm:max-w-[150px]'
                 },
                 {
                     'key': 'voyage_name',
                     'label': 'Voyage',
                     'sortable': True,
-                    'class': 'w-[140px] sm:w-[160px] px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                    'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
                     'responsive_class': 'hidden lg:table-cell',
-                    'width_class': 'max-w-[130px] sm:max-w-[150px]'
+                    'width_class': 'w-[130px] sm:w-[150px] max-w-[130px] sm:max-w-[150px]'
                 }
             ],
             'identifier_field': 'bill_of_lading'
