@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div class="flex-1 max-w-lg">
+            <input type="text" 
+                   id="searchInput"
+                   name="search"
+                   class="block p-2 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" 
+                   placeholder="{{ search_placeholder or 'Search...' }}" 
+                   value="{{ search or '' }}"
+                   hx-get="{{ url_for(routes.list) }}"
+                   hx-trigger="keyup changed delay:300ms"
+                   hx-target="#{{ entity_name|lower }}-table"
+                   hx-include="[name='page_size']"
+                   autofocus>
+            {% if search %}
+            <div class="mt-2">
+                <a href="{{ url_for(routes.list) }}" class="text-sm text-blue-600 hover:text-blue-800">
+                    Clear search
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="flex items-center">
+            {% block before_table %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg">
+        <!-- Dynamic height container with overflow -->
+        <div id="tableContainer" class="overflow-auto">
+            <div id="{{ entity_name|lower }}-table">
+                {% block table_content %}{% endblock %}
+            </div>
+        </div>
+
+        <div class="p-4 border-t bg-white sticky bottom-0 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div id="selectedItem" class="text-sm text-gray-900 font-medium min-w-0 sm:min-w-[200px] truncate"></div>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <select id="pageSize" 
+                        name="page_size"
+                        class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        hx-get="{{ url_for(routes.list) }}"
+                        hx-target="#{{ entity_name|lower }}-table"
+                        hx-include="[name='search']"
+                        hx-trigger="change">
+                    <option value="3" {% if page_size == 3 %}{% endif %}>3 per page</option>
+                    <option value="5" {% if page_size == 5 %}{% endif %}>5 per page</option>
+                    <option value="10" {% if page_size == 10 %}selected{% endif %}>10 per page</option>
+                    <option value="25" {% if page_size == 25 %}{% endif %}>25 per page</option>
+                    <option value="50" {% if page_size == 50 %}{% endif %}>50 per page</option>
+                    <option value="100" {% if page_size == 100 %}{% endif %}>100 per page</option>
+                </select>
+                {% if has_more %}
+                <button type="button"
+                        hx-get="{{ url_for(routes.list, page=page+1, sort=sort) }}"
+                        hx-target="#{{ entity_name|lower }}TableBody"
+                        hx-swap="beforeend"
+                        hx-include="[name='page_size'], [name='search']"
+                        class="px-4 py-2 text-sm text-gray-700 rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2">
+                    Load More
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% block after_table %}{% endblock %}
+</div>
+
+<style>
+.selected-row {
+    background-color: #EBF5FF !important;
+}
+
+/* Custom scrollbar styling */
+.overflow-auto::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+@media (max-width: 640px) {
+    .overflow-auto::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+}
+
+/* Ensure table header stays fixed */
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: white;
+}
+
+/* Force table to maintain its structure */
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+</style>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let searchTimeout;
+    const searchInput = document.getElementById('searchInput');
+    const tableContainer = document.getElementById('tableContainer');
+    const pageSizeSelect = document.getElementById('pageSize');
+    let selectedRow = null;
+
+    function adjustTableHeight() {
+        const pageSize = parseInt(pageSizeSelect.value);
+        const rowHeight = 36; // Approximate height of each row
+        const headerHeight = document.querySelector('thead').offsetHeight;
+        let containerHeight;
+
+        if (pageSize <= 3) {
+            containerHeight = (rowHeight * 3) + headerHeight;
+        } else if (pageSize <= 5) {
+            containerHeight = (rowHeight * 5) + headerHeight;
+        } else if (pageSize <= 10) {
+            containerHeight = (rowHeight * 10) + headerHeight;
+        } else {
+            containerHeight = Math.min(window.innerHeight - 300, (rowHeight * pageSize) + headerHeight);
+        }
+
+        tableContainer.style.height = `${containerHeight}px`;
+    }
+
+    // Initial height adjustment
+    adjustTableHeight();
+
+    // Adjust height when page size changes
+    pageSizeSelect.addEventListener('change', function() {
+        setTimeout(adjustTableHeight, 100); // Wait for HTMX to update the content
+    });
+
+    // Adjust height when window resizes
+    window.addEventListener('resize', adjustTableHeight);
+
+    // Adjust height after HTMX swaps
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        const tableDiv = document.getElementById('manifest-table');
+        if (tableDiv) {
+            adjustTableHeight();
+        }
+    });
+
+    window.selectRow = function(row, identifier) {
+        // Clear any existing selected rows in the entire table
+        document.querySelectorAll('.selected-row').forEach(function(r) {
+            r.classList.remove('selected-row');
+        });
+        
+        // Select the clicked row
+        row.classList.add('selected-row');
+        selectedRow = row;
+        document.getElementById('selectedItem').textContent = identifier;
+
+        // Don't prevent HTMX from doing its thing
+        return true;
+    };
+
+    function performSearch() {
+        const searchTerm = searchInput.value;
+        const pageSize = pageSizeSelect.value;
+        const url = new URL(window.location.href);
+        const tableDiv = document.getElementById('manifest-table');
+        const entityName = tableDiv.dataset.entity;
+        
+        url.searchParams.set('search', searchTerm);
+        url.searchParams.set('page_size', pageSize);
+        url.searchParams.set('page', '1');
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newResults = doc.querySelector(`#${entityName}-table`).innerHTML;
+                document.querySelector(`#${entityName}-table`).innerHTML = newResults;
+                document.getElementById('selectedItem').textContent = '';
+                selectedRow = null;
+                adjustTableHeight();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 300);
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

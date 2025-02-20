@@ -1,0 +1,31 @@
+<div class="overflow-hidden border-b border-gray-200 sm:rounded-lg">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+            <tr>
+                {% for column in columns %}
+                <th scope="col" 
+                    class="{{ column.class }}"
+                    {% if column.sortable %}
+                    hx-get="{{ url_for(routes.list, sort=('-' + column.key) if sort == column.key else column.key, search=search) }}"
+                    hx-target="#{{ entity_name|lower }}-table"
+                    {% endif %}>
+                    {{ column.label }}
+                    {% if column.sortable %}
+                        {% if sort == column.key %}
+                        <span class="ml-1">↑</span>
+                        {% elif sort == '-' + column.key %}
+                        <span class="ml-1">↓</span>
+                        {% endif %}
+                    {% endif %}
+                </th>
+                {% endfor %}
+                <th scope="col" class="relative w-[88px] sm:w-[96px] md:w-[104px] px-1.5 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+                    <span class="sr-only">Actions</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="{{ entity_name|lower }}TableBody" class="bg-white divide-y divide-gray-200">
+            {% block table_rows %}{% endblock %}
+        </tbody>
+    </table>
+</div>

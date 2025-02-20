@@ -15,15 +15,15 @@ logger = logging.getLogger(__name__)
 bp = Blueprint('manifest', __name__, url_prefix='/manifest')
 
 def register_manifest_routes(app):
+    # Register under crud.manifest namespace
+    bp.name = 'crud.manifest'
     app.register_blueprint(bp)
 
 @bp.route('/empty')
 def empty():
     """Return an empty response for closing modals"""
-    response = make_response()
-    # Add out-of-band swap to clear modal container
-    response.headers['HX-Reswap'] = 'innerHTML'
-    response.headers['HX-Retarget'] = '#modal-container'
+    response = make_response('<div id="modal-container"></div>')
+    response.headers['HX-Reswap'] = 'outerHTML'
     response.headers['HX-Trigger'] = 'modalClosed'
     return response
 
@@ -182,10 +182,10 @@ def list_manifest():
             'has_more': total_count > (page * page_size),
             'entity_name': 'Manifest',
             'routes': {
-                'list': 'manifest.list_manifest',
-                'create': 'manifest.create_manifest',
-                'edit': 'manifest.edit_manifest',
-                'delete': 'manifest.delete_manifest'
+                'list': 'crud.manifest.list_manifest',
+                'create': 'crud.manifest.create_manifest',
+                'edit': 'crud.manifest.edit_manifest',
+                'delete': 'crud.manifest.delete_manifest'
             },
             'columns': [
                 {
@@ -238,7 +238,9 @@ def list_manifest():
             return render_template('crud/manifest/_rows.html', **template_vars)
         elif is_htmx:
             logger.debug("Returning table template for HTMX request")
-            return render_template('crud/manifest/_table_container.html', **template_vars)
+            response = make_response(render_template('crud/manifest/table.html', **template_vars))
+            response.headers['HX-Trigger'] = f'updateTableHeight:{page_size}'
+            return response
         
         logger.debug("Returning full template")
         return render_template('crud/manifest/list.html', **template_vars)
@@ -263,7 +265,7 @@ def load_form():
             item = None
             
         choices = get_form_choices()
-        return render_template('manifest/form_modal.html', item=item, **choices)
+        return render_template('crud/manifest/form_modal.html', item=item, **choices)
     except Exception as e:
         logger.error(f"Error in load_form: {str(e)}", exc_info=True)
         db_session.rollback()
@@ -304,9 +306,8 @@ def save_manifest():
         db_session.commit()
         
         # Create response with HX-Trigger header
-        response = make_response()
-        response.headers['HX-Reswap'] = 'innerHTML'
-        response.headers['HX-Retarget'] = '#modal-container'
+        response = make_response('<div id="modal-container"></div>')
+        response.headers['HX-Reswap'] = 'outerHTML'
         response.headers['HX-Trigger'] = 'modalClosed manifestSaved'
         return response
     except Exception as e:
@@ -323,9 +324,8 @@ def delete_manifest(id):
             
         db_session.delete(item)
         db_session.commit()
-        return redirect(url_for('manifest.list_manifest'))
+        return redirect(url_for('crud.manifest.list_manifest'))
     except Exception as e:
         logger.error(f"Error in delete_manifest: {str(e)}", exc_info=True)
         db_session.rollback()
         raise
-   

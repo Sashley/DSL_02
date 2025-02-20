@@ -1,0 +1,28 @@
+<div class="overflow-hidden" data-entity="manifest">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                {% for column in columns %}
+                <th scope="col" 
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider {{ column.width_class }}"
+                    hx-get="{{ url_for('crud.manifest.list_manifest', sort='-' + column.key if sort == column.key else column.key) }}"
+                    hx-target="#manifest-table"
+                    hx-include="[name='search'], [name='per_page']">
+                    {{ column.label }}
+                    {% if sort == column.key %}
+                        <span class="ml-1">↑</span>
+                    {% elif sort == '-' + column.key %}
+                        <span class="ml-1">↓</span>
+                    {% endif %}
+                </th>
+                {% endfor %}
+                <th scope="col" class="relative px-6 py-3">
+                    <span class="sr-only">Actions</span>
+                </th>
+            </tr>
+        </thead>
+            <tbody id="manifestTableBody" class="bg-white divide-y divide-gray-200">
+                {% include 'crud/manifest/_rows.html' %}
+            </tbody>
+    </table>
+</div>

@@ -1,19 +1,29 @@
-<div class="modal-content bg-white rounded-lg shadow-lg max-w-4xl mx-auto mt-10 overflow-hidden">
-    <div class="px-6 py-4 bg-gray-50 border-b flex justify-between items-center">
-        <h3 class="text-lg font-medium text-gray-900">{{ 'Edit' if item else 'Create' }} Manifest</h3>
-        <button type="button" 
-                class="text-gray-400 hover:text-gray-500"
-                hx-get="{{ url_for('crud.manifest.empty') }}"
-                hx-target="#modal-container">
-            <span class="sr-only">Close</span>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-    </div>
-    
-    <form hx-post="{{ url_for('crud.manifest.save_manifest', id=item.id) if item else url_for('crud.manifest.save_manifest') }}"
+<div id="modal-container">
+    <!-- Modal Backdrop -->
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-40" aria-hidden="true"></div>
+
+    <!-- Modal Content -->
+    <div class="fixed inset-0 z-50 overflow-y-auto" style="padding-top: 6rem;">
+        <div class="flex justify-center">
+            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-4xl mx-4">
+                <!-- Close button -->
+                <button data-close-modal
+                        hx-get="{{ url_for('crud.manifest.empty') }}"
+                        hx-target="#modal-container"
+                        hx-swap="outerHTML"
+                        class="absolute top-0 right-0 mt-4 mr-4 text-gray-600 hover:text-gray-900 text-2xl font-bold z-50">
+                    ×
+                </button>
+                
+                <!-- Form Content -->
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="px-6 py-4 border-b flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-900">{{ 'Edit' if item else 'New' }} Manifest</h3>
+                    </div>
+        <form method="post" 
+          hx-post="{{ url_for('crud.manifest.save_manifest', id=item.id if item else None) }}" 
           hx-target="#modal-container"
+          hx-swap="outerHTML"
           class="p-6 space-y-4">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -31,8 +41,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Shipper</option>
                     {% for client in clients %}
-                    <option value="{{ client[0] }}" {{ 'selected' if item and item.shipper_id == client[0] else '' }}>
-                        {{ client[1] }}
+                    <option value="{{ client.id }}" {{ 'selected' if item and item.shipper_id == client.id else '' }}>
+                        {{ client.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -44,8 +54,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Consignee</option>
                     {% for client in clients %}
-                    <option value="{{ client[0] }}" {{ 'selected' if item and item.consignee_id == client[0] else '' }}>
-                        {{ client[1] }}
+                    <option value="{{ client.id }}" {{ 'selected' if item and item.consignee_id == client.id else '' }}>
+                        {{ client.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -57,8 +67,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Vessel</option>
                     {% for vessel in vessels %}
-                    <option value="{{ vessel[0] }}" {{ 'selected' if item and item.vessel_id == vessel[0] else '' }}>
-                        {{ vessel[1] }}
+                    <option value="{{ vessel.id }}" {{ 'selected' if item and item.vessel_id == vessel.id else '' }}>
+                        {{ vessel.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -70,8 +80,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Voyage</option>
                     {% for voyage in voyages %}
-                    <option value="{{ voyage[0] }}" {{ 'selected' if item and item.voyage_id == voyage[0] else '' }}>
-                        {{ voyage[1] }}
+                    <option value="{{ voyage.id }}" {{ 'selected' if item and item.voyage_id == voyage.id else '' }}>
+                        {{ voyage.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -83,8 +93,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Port of Loading</option>
                     {% for port in ports %}
-                    <option value="{{ port[0] }}" {{ 'selected' if item and item.port_of_loading_id == port[0] else '' }}>
-                        {{ port[1] }}
+                    <option value="{{ port.id }}" {{ 'selected' if item and item.port_of_loading_id == port.id else '' }}>
+                        {{ port.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -96,8 +106,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Port of Discharge</option>
                     {% for port in ports %}
-                    <option value="{{ port[0] }}" {{ 'selected' if item and item.port_of_discharge_id == port[0] else '' }}>
-                        {{ port[1] }}
+                    <option value="{{ port.id }}" {{ 'selected' if item and item.port_of_discharge_id == port.id else '' }}>
+                        {{ port.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -133,8 +143,8 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Select Manifester</option>
                     {% for user in manifesters %}
-                    <option value="{{ user[0] }}" {{ 'selected' if item and item.manifester_id == user[0] else '' }}>
-                        {{ user[1] }}
+                    <option value="{{ user.id }}" {{ 'selected' if item and item.manifester_id == user.id else '' }}>
+                        {{ user.name }}
                     </option>
                     {% endfor %}
                 </select>
@@ -152,6 +162,7 @@
             <button type="button"
                     hx-get="{{ url_for('crud.manifest.empty') }}"
                     hx-target="#modal-container"
+                    hx-swap="outerHTML"
                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Cancel
             </button>
@@ -161,4 +172,8 @@
             </button>
         </div>
     </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,211 @@
+<div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto"> 
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">{% if item %}Edit{% else %}New{% endif %} Manifest</h1>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            <button type="button" 
+                    class="tab-button border-b-2 py-2 px-1 text-sm font-medium border-blue-500 text-blue-600"
+                    data-tab="bill-of-lading">
+                Bill of Lading
+            </button>
+            <button type="button" 
+                    class="tab-button border-b-2 py-2 px-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    data-tab="voyage">
+                Voyage
+            </button>
+            <button type="button" 
+                    class="tab-button border-b-2 py-2 px-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    data-tab="information">
+                Information
+            </button>
+        </nav>
+    </div>
+    
+    <form method="post" 
+          hx-post="{{ url_for('crud.manifest.save_manifest', id=item.id if item else None) }}" 
+          hx-target="#modal-container"
+          hx-swap="innerHTML">
+        <!-- Bill of Lading Tab -->
+        <div id="bill-of-lading-tab" class="tab-content space-y-6">
+            <div>
+                <label for="bill_of_lading" class="block text-sm font-medium text-gray-500">Bill of Lading</label>
+                <input type="text" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                       id="bill_of_lading" name="bill_of_lading" value="{{ item.bill_of_lading if item else '' }}">
+            </div>
+            
+            <div>
+                <label for="shipper_id" class="block text-sm font-medium text-gray-500">Shipper</label>
+                <select class="mt-2 block w-full rounded-md border-gray-300 hover:border-gray-500 focus:border-gray-500 focus:ring-gray-500 p-4 hover:bg-gray-100" 
+                        id="shipper_id" name="shipper_id">
+                    <option value="">Select a shipper</option>
+                    {% for client in clients %}
+                    <option value="{{ client.id }}" {% if item and item.shipper_id == client.id %}selected{% endif %}>
+                        {{ client.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="consignee_id" class="block text-sm font-medium text-gray-500">Consignee</label>
+                <select class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-4 hover:bg-gray-100" 
+                        id="consignee_id" name="consignee_id">
+                    <option value="">Select a consignee</option>
+                    {% for client in clients %}
+                    <option value="{{ client.id }}" {% if item and item.consignee_id == client.id %}selected{% endif %}>
+                        {{ client.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Voyage Tab -->
+        <div id="voyage-tab" class="tab-content hidden space-y-6">
+            <div>
+                <label for="vessel_id" class="block text-sm font-medium text-gray-500">Vessel</label>
+                <select class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                        id="vessel_id" name="vessel_id">
+                    <option value="">Select a vessel</option>
+                    {% for vessel in vessels %}
+                    <option value="{{ vessel.id }}" {% if item and item.vessel_id == vessel.id %}selected{% endif %}>
+                        {{ vessel.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="voyage_id" class="block text-sm font-medium text-gray-500">Voyage</label>
+                <select class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                        id="voyage_id" name="voyage_id">
+                    <option value="">Select a voyage</option>
+                    {% for voyage in voyages %}
+                    <option value="{{ voyage.id }}" {% if item and item.voyage_id == voyage.id %}selected{% endif %}>
+                        {{ voyage.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="port_of_loading_id" class="block text-sm font-medium text-gray-500">Port of Loading</label>
+                <select class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                        id="port_of_loading_id" name="port_of_loading_id">
+                    <option value="">Select a port</option>
+                    {% for port in ports %}
+                    <option value="{{ port.id }}" {% if item and item.port_of_loading_id == port.id %}selected{% endif %}>
+                        {{ port.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="port_of_discharge_id" class="block text-sm font-medium text-gray-500">Port of Discharge</label>
+                <select class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                        id="port_of_discharge_id" name="port_of_discharge_id">
+                    <option value="">Select a port</option>
+                    {% for port in ports %}
+                    <option value="{{ port.id }}" {% if item and item.port_of_discharge_id == port.id %}selected{% endif %}>
+                        {{ port.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Information Tab -->
+        <div id="information-tab" class="tab-content hidden">
+            <div class="space-y-6">
+                <div>
+                    <label for="place_of_delivery" class="block text-sm font-medium text-gray-500">Place of Delivery</label>
+                    <input type="text" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                           id="place_of_delivery" name="place_of_delivery" value="{{ item.place_of_delivery if item else '' }}">
+                </div>
+                
+                <div>
+                    <label for="place_of_receipt" class="block text-sm font-medium text-gray-500">Place of Receipt</label>
+                    <input type="text" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                           id="place_of_receipt" name="place_of_receipt" value="{{ item.place_of_receipt if item else '' }}">
+                </div>
+                
+                <div>
+                    <label for="clauses" class="block text-sm font-medium text-gray-500">Clauses</label>
+                    <input type="text" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                           id="clauses" name="clauses" value="{{ item.clauses if item else '' }}">
+                </div>
+                
+                <div>
+                    <label for="date_of_receipt" class="block text-sm font-medium text-gray-500">Date of Receipt</label>
+                    <input type="date" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                           id="date_of_receipt" name="date_of_receipt" value="{{ item.date_of_receipt if item else '' }}">
+                </div>
+                
+                <div>
+                    <label for="manifester_id" class="block text-sm font-medium text-gray-500">Manifester</label>
+                    <select class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 p-2 hover:bg-gray-100" 
+                            id="manifester_id" name="manifester_id">
+                        <option value="">Select a manifester</option>
+                        {% for user in manifesters %}
+                        <option value="{{ user.id }}" {% if item and item.manifester_id == user.id %}selected{% endif %}>
+                            {{ user.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end gap-4 mt-8 pt-4 border-t border-gray-200">
+            <button type="submit" class="px-4 py-2 text-sm text-gray-700 rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                Save
+            </button>
+            <button type="button" class="px-4 py-2 text-sm text-gray-700 rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+                    hx-get="{{ url_for('crud.manifest.empty') }}"
+                    hx-target="#modal-container"
+                    hx-swap="innerHTML">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function initializeTabs() {
+        const tabs = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.tab-content');
+
+        function switchTab(tabId) {
+            contents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            tabs.forEach(tab => {
+                tab.classList.remove('border-blue-500', 'text-blue-600');
+                tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            });
+
+            const selectedContent = document.getElementById(tabId + '-tab');
+            const selectedTab = document.querySelector(`[data-tab="${tabId}"]`);
+            
+            selectedContent.classList.remove('hidden');
+            selectedTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            selectedTab.classList.add('border-blue-500', 'text-blue-600');
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        });
+
+        // Initialize first tab as active
+        switchTab('bill-of-lading');
+    }
+
+    // Initialize tabs immediately
+    initializeTabs();
+</script>
