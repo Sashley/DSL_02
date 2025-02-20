@@ -152,25 +152,55 @@ def get_filtered_query():
 def list_manifest():
     logger.debug("Entering list_manifest route")
     try:
-        page_size = int(request.args.get('page_size', '10'))
-        page = int(request.args.get('page', '1'))
-        offset = (page - 1) * page_size
-        
-        query = get_filtered_query()
-        total_count = query.count()
-        logger.debug(f"Total count: {total_count}")
-        
-        results = query.offset(offset).limit(page_size).all()
-        logger.debug(f"Found {len(results)} manifests for page {page}")
-        
-        items = []
-        for result in results:
+        # Check if we're requesting a single row
+        single_id = request.args.get('id')
+        if single_id:
+            # Get just the single manifest with relationships
+            ShipperAlias = aliased(Client)
+            ConsigneeAlias = aliased(Client)
+            result = db.session.query(Manifest)\
+                .outerjoin(ShipperAlias, Manifest.shipper_id == ShipperAlias.id)\
+                .outerjoin(ConsigneeAlias, Manifest.consignee_id == ConsigneeAlias.id)\
+                .outerjoin(Vessel, Manifest.vessel_id == Vessel.id)\
+                .outerjoin(Voyage, Manifest.voyage_id == Voyage.id)\
+                .filter(Manifest.id == single_id)\
+                .add_columns(
+                    ShipperAlias.name.label('shipper_name'),
+                    ConsigneeAlias.name.label('consignee_name'),
+                    Vessel.name.label('vessel_name'),
+                    Voyage.name.label('voyage_name')
+                ).first()
+            
+            if not result:
+                abort(404)
+            
             manifest = result[0]
             manifest.shipper_name = result.shipper_name
             manifest.consignee_name = result.consignee_name
             manifest.vessel_name = result.vessel_name
             manifest.voyage_name = result.voyage_name
-            items.append(manifest)
+            items = [manifest]
+        else:
+            # Normal list view
+            page_size = int(request.args.get('page_size', '10'))
+            page = int(request.args.get('page', '1'))
+            offset = (page - 1) * page_size
+            
+            query = get_filtered_query()
+            total_count = query.count()
+            logger.debug(f"Total count: {total_count}")
+            
+            results = query.offset(offset).limit(page_size).all()
+            logger.debug(f"Found {len(results)} manifests for page {page}")
+            
+            items = []
+            for result in results:
+                manifest = result[0]
+                manifest.shipper_name = result.shipper_name
+                manifest.consignee_name = result.consignee_name
+                manifest.vessel_name = result.vessel_name
+                manifest.voyage_name = result.voyage_name
+                items.append(manifest)
 
         template_vars = {
             'items': items,
@@ -233,7 +263,15 @@ def list_manifest():
         is_htmx = request.headers.get('HX-Request') == 'true'
         logger.debug(f"Is HTMX request: {is_htmx}")
         
-        if is_htmx and page > 1:
+        if single_id:
+            # For single row requests, return just the row template
+            logger.debug(f"Returning single row template for ID: {single_id}")
+            return render_template('crud/manifest/_row.html', 
+                item=items[0],
+                columns=template_vars['columns'],
+                routes=template_vars['routes']
+            )
+        elif is_htmx and page > 1:
             logger.debug("Returning rows template for HTMX request")
             return render_template('crud/manifest/_rows.html', **template_vars)
         elif is_htmx:
@@ -304,11 +342,91 @@ def save_manifest():
         if not id:
             db_session.add(item)
         db_session.commit()
+
+        # Fetch the updated manifest with relationships using the same aliases as list_manifest
+        ShipperAlias = aliased(Client)
+        ConsigneeAlias = aliased(Client)
         
-        # Create response with HX-Trigger header
-        response = make_response('<div id="modal-container"></div>')
-        response.headers['HX-Reswap'] = 'outerHTML'
-        response.headers['HX-Trigger'] = 'modalClosed manifestSaved'
+        updated_manifest = db_session.query(Manifest)\
+            .outerjoin(ShipperAlias, Manifest.shipper_id == ShipperAlias.id)\
+            .outerjoin(ConsigneeAlias, Manifest.consignee_id == ConsigneeAlias.id)\
+            .outerjoin(Vessel, Manifest.vessel_id == Vessel.id)\
+            .outerjoin(Voyage, Manifest.voyage_id == Voyage.id)\
+            .filter(Manifest.id == item.id)\
+            .add_columns(
+                ShipperAlias.name.label('shipper_name'),
+                ConsigneeAlias.name.label('consignee_name'),
+                Vessel.name.label('vessel_name'),
+                Voyage.name.label('voyage_name')
+            ).first()
+
+        manifest = updated_manifest[0]
+        manifest.shipper_name = updated_manifest.shipper_name
+        manifest.consignee_name = updated_manifest.consignee_name
+        manifest.vessel_name = updated_manifest.vessel_name
+        manifest.voyage_name = updated_manifest.voyage_name
+
+        # Get the standard column configuration
+        columns = [
+            {
+                'key': 'bill_of_lading',
+                'label': 'Bill of Lading',
+                'sortable': True,
+                'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                'width_class': 'w-[180px] sm:w-[200px] max-w-[200px] sm:max-w-[250px]'
+            },
+            {
+                'key': 'shipper_name',
+                'label': 'Shipper',
+                'sortable': True,
+                'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                'width_class': 'w-[150px] sm:w-[180px] max-w-[150px] sm:max-w-[180px]'
+            },
+            {
+                'key': 'consignee_name',
+                'label': 'Consignee',
+                'sortable': True,
+                'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                'responsive_class': 'hidden md:table-cell',
+                'width_class': 'w-[150px] sm:w-[180px] max-w-[150px] sm:max-w-[180px]'
+            },
+            {
+                'key': 'vessel_name',
+                'label': 'Vessel',
+                'sortable': True,
+                'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                'responsive_class': 'hidden lg:table-cell',
+                'width_class': 'w-[130px] sm:w-[150px] max-w-[130px] sm:max-w-[150px]'
+            },
+            {
+                'key': 'voyage_name',
+                'label': 'Voyage',
+                'sortable': True,
+                'class': 'px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50',
+                'responsive_class': 'hidden lg:table-cell',
+                'width_class': 'w-[130px] sm:w-[150px] max-w-[130px] sm:max-w-[150px]'
+            }
+        ]
+
+        # Render the updated row
+        updated_row_html = render_template('crud/manifest/_row.html', 
+            item=manifest,
+            columns=columns,
+            routes={
+                'edit': 'crud.manifest.edit_manifest',
+                'delete': 'crud.manifest.delete_manifest'
+            }
+        )
+        
+        # Create response with updated row data
+        response = make_response({
+            'modal': '',
+            'row_id': f'manifest-row-{item.id}',
+            'row_html': updated_row_html
+        })
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['HX-Reswap'] = 'none'  # Let our JavaScript handle the swap
+        response.headers['HX-Trigger'] = 'modalClosed'
         return response
     except Exception as e:
         logger.error(f"Error in save_manifest: {str(e)}", exc_info=True)

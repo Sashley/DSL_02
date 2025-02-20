@@ -1,4 +1,4 @@
-<tr class="hover:bg-gray-50 group">
+<tr id="manifest-row-{{ item.id }}" class="hover:bg-gray-50 group">
     <td class="px-4 py-1 whitespace-nowrap border-b text-sm w-[180px] sm:w-[200px] max-w-[200px] sm:max-w-[250px] truncate">
         {{ item.bill_of_lading }}
     </td>
@@ -25,7 +25,8 @@
             </button>
             <button hx-delete="{{ url_for('crud.manifest.delete_manifest', id=item.id) }}"
                     hx-confirm="Are you sure you want to delete this Manifest?"
-                    hx-target="closest tr"
+                    hx-target="#manifest-table"
+                    hx-swap="innerHTML"
                     class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-2 rounded text-sm">
                 Delete
             </button>

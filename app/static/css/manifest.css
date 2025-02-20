@@ -1,6 +1,24 @@
-/* Sticky header styles */
-thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+/* Base table styles */
+.manifest-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  position: relative;
+}
+
+/* Loading state styles */
+.htmx-request.manifest-table {
+  opacity: 0.7;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+/* Button styles */
+.manifest-table button {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.htmx-request.manifest-table button {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

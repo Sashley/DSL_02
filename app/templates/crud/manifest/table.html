@@ -1,5 +1,5 @@
 <div class="overflow-x-auto" data-entity="manifest">
-    <table class="min-w-full divide-y divide-gray-200">
+    <table id="manifest-table" class="min-w-full divide-y divide-gray-200 manifest-table">
         <thead class="bg-gray-50">
             <tr>
                 {% for column in columns %}
@@ -7,6 +7,7 @@
                     class="{{ column.class }} {{ column.width_class }} {{ column.responsive_class }}"
                     hx-get="{{ url_for('crud.manifest.list_manifest', sort='-' + column.key if sort == column.key else column.key) }}"
                     hx-target="#manifest-table"
+                    hx-swap="innerHTML"
                     hx-include="[name='search'], [name='per_page']">
                     {{ column.label }}
                     {% if sort == column.key %}
@@ -21,8 +22,8 @@
                 </th>
             </tr>
         </thead>
-            <tbody id="manifestTableBody" class="bg-white divide-y divide-gray-200">
-                {% include 'crud/manifest/_rows.html' %}
-            </tbody>
+        <tbody id="manifestTableBody" class="bg-white divide-y divide-gray-200">
+            {% include 'crud/manifest/_rows.html' %}
+        </tbody>
     </table>
 </div>
