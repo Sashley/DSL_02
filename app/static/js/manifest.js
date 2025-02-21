@@ -93,46 +93,23 @@ document.addEventListener('htmx:afterOnLoad', function (evt) {
         const triggers = JSON.parse(triggerHeader);
         if (triggers.updateRow) {
           const { row_id, row_html } = triggers.updateRow;
-          const rowElement = document.getElementById(row_id);
 
-          if (rowElement) {
-            // Check if sort parameter exists and if it matches edited fields
-            const urlParams = new URLSearchParams(window.location.search);
-            const sort = urlParams.get('sort');
-            const editedFields = ['bill_of_lading', 'shipper_name', 'consignee_name', 'vessel_name', 'voyage_name'];
-            const sortField = sort?.startsWith('-') ? sort.substring(1) : sort;
+          // Always refresh the table to maintain sort order
+          refreshTable().then(() => {
+            // After table refresh, find and focus the updated row
+            const updatedRow = document.getElementById(row_id);
+            if (updatedRow) {
+              // Scroll the row into view with a smooth animation
+              updatedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            if (editedFields.includes(sortField)) {
-              // If sorting by an edited field, refresh the whole table
-              console.log('Sort field matches edited field, refreshing table');
-              refreshTable();
-            } else {
-              // Create a temporary container and parse the HTML
-              const tempDiv = document.createElement('div');
-              tempDiv.innerHTML = row_html.trim();
-              // Ensure we get just the tr element
-              const newRow = tempDiv.querySelector('tr');
-
-              if (newRow) {
-                // Copy over any HTMX attributes
-                Array.from(rowElement.attributes).forEach(attr => {
-                  if (attr.name.startsWith('hx-')) {
-                    newRow.setAttribute(attr.name, attr.value);
-                  }
-                });
-
-                // Replace the old row with the new one
-                rowElement.replaceWith(newRow);
-                console.log('Row updated successfully:', row_id);
-              } else {
-                console.error('Failed to parse row HTML - no tr element found');
-                refreshTable();
-              }
+              // Add a subtle highlight effect
+              updatedRow.classList.add('bg-yellow-50');
+              setTimeout(() => {
+                updatedRow.classList.remove('bg-yellow-50');
+                updatedRow.classList.add('bg-white');
+              }, 2000);
             }
-          } else {
-            console.log('Row not found, refreshing table');
-            refreshTable();
-          }
+          });
         }
       } catch (e) {
         console.error('Error processing update:', e);
@@ -144,17 +121,21 @@ document.addEventListener('htmx:afterOnLoad', function (evt) {
 
 // Helper function to refresh the table
 function refreshTable() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const sort = urlParams.get('sort');
+  return new Promise((resolve) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sort = urlParams.get('sort');
 
-  let url = '/crud/manifest/';
-  if (sort) {
-    url += `?sort=${sort}`;
-  }
+    let url = '/crud/manifest/';
+    if (sort) {
+      url += `?sort=${sort}`;
+    }
 
-  htmx.ajax('GET', url, {
-    target: '#manifest-table',
-    swap: 'innerHTML',
-    include: '[name="search"], [name="per_page"]'
+    htmx.ajax('GET', url, {
+      target: '#manifest-table',
+      swap: 'innerHTML',
+      include: '[name="search"], [name="per_page"]'
+    }).then(() => {
+      resolve();
+    });
   });
 }
