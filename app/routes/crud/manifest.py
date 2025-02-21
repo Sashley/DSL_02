@@ -7,6 +7,7 @@ from sqlalchemy import or_, cast, String, func
 from sqlalchemy.orm import aliased
 from datetime import datetime
 import logging
+import json
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -313,14 +314,43 @@ def load_form():
 def save_manifest():
     """Save manifest via HTMX form submission"""
     try:
+        # Validate required fields
+        required_fields = {
+            'bill_of_lading': 'Bill of Lading',
+            'shipper_id': 'Shipper',
+            'consignee_id': 'Consignee',
+            'vessel_id': 'Vessel',
+            'voyage_id': 'Voyage'
+        }
+        
+        errors = {}
+        for field, label in required_fields.items():
+            if not request.form.get(field):
+                errors[field] = f"{label} is required"
+        
+        if errors:
+            logger.warning(f"Validation errors: {errors}")
+            response = make_response(jsonify({
+                'success': False,
+                'errors': errors
+            }))
+            response.status_code = 400
+            return response
+
         id = request.args.get('id')
         if id:
             item = db_session.query(Manifest).get(id)
             if item is None:
-                abort(404)
+                response = make_response(jsonify({
+                    'success': False,
+                    'errors': {'general': 'Manifest not found'}
+                }))
+                response.status_code = 404
+                return response
         else:
             item = Manifest()
             
+        # Update fields
         item.bill_of_lading = request.form.get('bill_of_lading')
         item.shipper_id = request.form.get('shipper_id')
         item.consignee_id = request.form.get('consignee_id')
@@ -338,33 +368,59 @@ def save_manifest():
         logger.debug(f"Save - Parsed date: {item.date_of_receipt}")
         
         item.manifester_id = request.form.get('manifester_id')
-        
+
+        # Save to database using the same session throughout
         if not id:
             db_session.add(item)
         db_session.commit()
-
-        # Fetch the updated manifest with relationships using the same aliases as list_manifest
-        ShipperAlias = aliased(Client)
-        ConsigneeAlias = aliased(Client)
         
-        updated_manifest = db_session.query(Manifest)\
-            .outerjoin(ShipperAlias, Manifest.shipper_id == ShipperAlias.id)\
-            .outerjoin(ConsigneeAlias, Manifest.consignee_id == ConsigneeAlias.id)\
-            .outerjoin(Vessel, Manifest.vessel_id == Vessel.id)\
-            .outerjoin(Voyage, Manifest.voyage_id == Voyage.id)\
-            .filter(Manifest.id == item.id)\
-            .add_columns(
+        try:
+            # Refresh the item to ensure all relationships are loaded
+            db_session.refresh(item)
+            
+            # Get relationship names in a single query
+            ShipperAlias = aliased(Client)
+            ConsigneeAlias = aliased(Client)
+            
+            result = db_session.query(
                 ShipperAlias.name.label('shipper_name'),
                 ConsigneeAlias.name.label('consignee_name'),
                 Vessel.name.label('vessel_name'),
                 Voyage.name.label('voyage_name')
-            ).first()
+            ).select_from(Manifest)\
+                .outerjoin(ShipperAlias, Manifest.shipper_id == ShipperAlias.id)\
+                .outerjoin(ConsigneeAlias, Manifest.consignee_id == ConsigneeAlias.id)\
+                .outerjoin(Vessel, Manifest.vessel_id == Vessel.id)\
+                .outerjoin(Voyage, Manifest.voyage_id == Voyage.id)\
+                .filter(Manifest.id == item.id)\
+                .first()
 
-        manifest = updated_manifest[0]
-        manifest.shipper_name = updated_manifest.shipper_name
-        manifest.consignee_name = updated_manifest.consignee_name
-        manifest.vessel_name = updated_manifest.vessel_name
-        manifest.voyage_name = updated_manifest.voyage_name
+            if not result:
+                logger.error(f"Failed to find manifest relationships after save: id={item.id}")
+                raise Exception("Failed to load manifest relationships")
+                
+            # Assign relationship names to the manifest object
+            item.shipper_name = result.shipper_name
+            item.consignee_name = result.consignee_name
+            item.vessel_name = result.vessel_name
+            item.voyage_name = result.voyage_name
+
+            # Log the successful save with relationship data
+            logger.info(f"Successfully saved manifest {item.id}: "
+                    f"bill_of_lading={item.bill_of_lading}, "
+                    f"shipper={item.shipper_name}, "
+                    f"consignee={item.consignee_name}, "
+                    f"vessel={item.vessel_name}, "
+                    f"voyage={item.voyage_name}")
+        except Exception as e:
+            logger.error(f"Error loading relationships: {str(e)}")
+            db_session.rollback()
+            response = make_response(jsonify({
+                'success': False,
+                'errors': {'general': 'Failed to save manifest'}
+            }))
+            response.status_code = 500
+            return response
 
         # Get the standard column configuration
         columns = [
@@ -410,28 +466,38 @@ def save_manifest():
 
         # Render the updated row
         updated_row_html = render_template('crud/manifest/_row.html', 
-            item=manifest,
+            item=item,
             columns=columns,
             routes={
+                'list': 'crud.manifest.list_manifest',
+                'create': 'crud.manifest.create_manifest',
                 'edit': 'crud.manifest.edit_manifest',
                 'delete': 'crud.manifest.delete_manifest'
             }
         )
         
-        # Create response with updated row data
-        response = make_response({
-            'modal': '',
-            'row_id': f'manifest-row-{item.id}',
-            'row_html': updated_row_html
+        # Create success response with empty modal
+        response = make_response('<div id="modal-container"></div>')
+        
+        # Combine both triggers into a single After-Swap event
+        response.headers['HX-Trigger-After-Swap'] = json.dumps({
+            'modalClosed': True,
+            'updateRow': {
+                'row_id': f'manifest-row-{item.id}',
+                'row_html': updated_row_html
+            }
         })
-        response.headers['Content-Type'] = 'application/json'
-        response.headers['HX-Reswap'] = 'none'  # Let our JavaScript handle the swap
-        response.headers['HX-Trigger'] = 'modalClosed'
         return response
+
     except Exception as e:
         logger.error(f"Error in save_manifest: {str(e)}", exc_info=True)
         db_session.rollback()
-        raise
+        response = make_response(jsonify({
+            'success': False,
+            'errors': {'general': str(e)}
+        }))
+        response.status_code = 500
+        return response
 
 @bp.route('/<int:id>/delete', methods=['POST'])
 def delete_manifest(id):
